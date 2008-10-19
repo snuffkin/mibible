@@ -297,7 +297,7 @@ public class MibTreeBuilder {
          * Creates a new MIB tree.
          */
         public MibTree() {
-            super(new MibNode("Mibble Browser", null));
+            super(new MibNode("mibible browser", null));
         }
 
         /**

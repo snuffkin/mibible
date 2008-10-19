@@ -71,7 +71,7 @@ public class LicenseDialog extends JDialog {
         GridBagConstraints  c;
 
         // Set dialog title
-        setTitle("Mibble License");
+        setTitle("mibible License");
         setSize(600, 600);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new GridBagLayout());

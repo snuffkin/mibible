@@ -48,16 +48,18 @@ public class AboutDialog extends JDialog {
      * The acknowledgements text.
      */
     private static final String ACKNOWLEDGEMENTS =
-        "Written by Watsh Rajneesh & Per Cederberg.\n" +
-        "Thanks to Charles F. Schatz for a similar effort.\n" +
+        "Written by mibible developer group.\n" +
+        "See http://code.google.com/p/mibible/ for infomaton.\n\n" +
+        "This software uses the MIBBLE.\n" +
+        "See http://www.mibble.org/ for infomaton.\n\n" +
         "This software uses the Westhawk SNMP Stack.\n" +
-        "See http://snmp.westhawk.co.uk/ for info.";
+        "See http://snmp.westhawk.co.uk/ for infomaton.";
 
     /**
      * The copyright text.
      */
     private static final String COPYRIGHT =
-        "(c) 2004 Per Cederberg. All rights reserved.\n" +
+        "(c) 2008 mibible developer group. All rights reserved.\n" +
         "This program comes with ABSOLUTELY NO\n" +
         "WARRANTY; for details see the accompanying\n" +
         "license.";
@@ -83,14 +85,14 @@ public class AboutDialog extends JDialog {
         GridBagConstraints  c;
 
         // Set dialog title
-        setTitle("About Mibble MIB Browser");
+        setTitle("About mibible browser");
         setResizable(false);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         getContentPane().setBackground(Color.WHITE);
         getContentPane().setLayout(new GridBagLayout());
 
         // Add header text
-        label = new JLabel("Mibble MIB Browser");
+        label = new JLabel("mibible browser");
         label.setFont(Font.decode("sans bold 20"));
         label.setForeground(new Color(227, 96, 48));
         c = new GridBagConstraints();

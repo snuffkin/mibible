@@ -118,7 +118,7 @@ public class BrowserFrame extends JFrame {
     private File currentDir = new File(".");
 
     /**
-     * Creates a new Mibble browser frame.
+     * Creates a new browser frame.
      *
      * @param browser        the browser application
      */
@@ -145,7 +145,7 @@ public class BrowserFrame extends JFrame {
 
         // Set title, size and menus
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setTitle("Mibble MIB Browser");
+        setTitle("mibible browser");
         size = Toolkit.getDefaultToolkit().getScreenSize();
         bounds.width = (int) (size.width * 0.75);
         bounds.height = (int) (size.height * 0.75);
@@ -263,6 +263,7 @@ public class BrowserFrame extends JFrame {
 
         // Create help menu
         menu = new JMenu("Help");
+/**
         item = new JMenuItem("License...");
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -270,6 +271,7 @@ public class BrowserFrame extends JFrame {
             }
         });
         menu.add(item);
+*/
         item = new JMenuItem("About...");
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
