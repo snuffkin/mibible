@@ -11,6 +11,8 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 
 import net.percederberg.mibble.MibSymbol;
 import net.percederberg.mibble.MibType;
+import net.percederberg.mibble.MibValue;
+import net.percederberg.mibble.MibValueSymbol;
 import net.percederberg.mibble.snmp.SnmpAccess;
 import net.percederberg.mibble.snmp.SnmpNotificationGroup;
 import net.percederberg.mibble.snmp.SnmpNotificationType;
@@ -18,6 +20,7 @@ import net.percederberg.mibble.snmp.SnmpObjectGroup;
 import net.percederberg.mibble.snmp.SnmpObjectType;
 import net.percederberg.mibble.type.SequenceOfType;
 import net.percederberg.mibble.type.SequenceType;
+import net.percederberg.mibble.value.ObjectIdentifierValue;
 
 /**
  * TreeCellRenderer for MIB Tree
@@ -116,13 +119,31 @@ public class MibTreeCellRenderer extends DefaultTreeCellRenderer
      * is set based on the <code>leaf</code> and <code>expanded</code>
      * parameters.
      */
-   public Component getTreeCellRendererComponent(JTree tree, Object value,
-                          boolean sel,
-                          boolean expanded,
-                          boolean leaf, int row,
-                          boolean hasFocus) {
-    String         stringValue = tree.convertValueToText(value, sel,
-                      expanded, leaf, row, hasFocus);
+    public Component getTreeCellRendererComponent(JTree tree, Object value,
+                           boolean sel,
+                           boolean expanded,
+                           boolean leaf, int row,
+                           boolean hasFocus)
+    {
+    	// convertValueToTextに渡すためのvalueを取得する
+    	Object tempValue;
+	    if (value instanceof MibNode)
+	    {
+		    tempValue = convertMibNodeToString((MibNode) value);
+		    if (tempValue == null)
+		    {
+		    	tempValue = value;
+		    }
+        }
+	    else
+	    {
+	    	tempValue = value;
+	    }
+	    
+	    // Nodeのオブジェクトを表示文字列に変換する
+        String stringValue
+            = tree.convertValueToText(tempValue, sel,
+                                      expanded, leaf, row, hasFocus);
 
        this.tree = tree;
     this.hasFocus = hasFocus;
@@ -180,6 +201,35 @@ public class MibTreeCellRenderer extends DefaultTreeCellRenderer
     return this;
    }
     
+    /**
+     * convert MibNode To String for Rendering.
+     * 
+     * @param node MibNode
+     * @return String
+     */
+    private String convertMibNodeToString(MibNode node)
+    {
+        // MibSymbolがnullの場合は空文字列を表示する
+        MibSymbol symbol = node.getSymbol();
+        if (symbol == null)
+        {
+            return null;
+        }
+        
+        // MibSymbolの場合の文字列設定
+ 		if (symbol instanceof MibValueSymbol)
+ 		{
+ 			MibValueSymbol targetSymbol = (MibValueSymbol) symbol;
+ 			MibValue value = targetSymbol.getValue();
+ 			if (value instanceof ObjectIdentifierValue)
+ 			{
+ 				ObjectIdentifierValue oid = (ObjectIdentifierValue) value;
+ 				return "[" + oid.getValue() + "] " + symbol.getName();
+ 			}
+ 		}
+ 		return symbol.getName();
+    }
+   
     /**
      * convert MibNode To Tree Icon for Rendering.
      * 
