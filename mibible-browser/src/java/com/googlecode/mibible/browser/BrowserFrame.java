@@ -27,6 +27,14 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.ByteArrayOutputStream;
@@ -34,7 +42,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.TooManyListenersException;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -43,9 +55,11 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -63,6 +77,9 @@ import net.percederberg.mibble.MibValueSymbol;
  * @since    2.5
  */
 public class BrowserFrame extends JFrame {
+
+    /** The default component insets */
+    private static final Insets DEFAULT_INSETS = new Insets(2, 5, 2, 5);
 
     /**
      * The browser application.
@@ -106,6 +123,20 @@ public class BrowserFrame extends JFrame {
      * The MIB tree component.
      */
     private JTree mibTree = null;
+
+    /** Trap Name Search label */
+    private JLabel nameSearchLabel = new JLabel("Name"); 
+    /** Trap Name Search field */
+    private JTextField nameSearchField = new JTextField("", 30);
+    /** The Name Search button */
+    private JButton nameSearchButton = new JButton("Search");
+
+    /** Trap OID Search label */
+    private JLabel oidSearchLabel = new JLabel("OID"); 
+    /** Trap OID Search field */
+    private JTextField oidSearchField = new JTextField("", 30);
+    /** The OID Search button */
+    private JButton oidSearchButton = new JButton("Search");
 
     /**
      * The SNMP operations panel.
@@ -157,7 +188,7 @@ public class BrowserFrame extends JFrame {
         getContentPane().setLayout(new GridBagLayout());
 
         // Add horizontal split pane
-        horizontalSplitPane.setDividerLocation((int) (bounds.width * 0.35));
+        horizontalSplitPane.setDividerLocation((int) (bounds.width * 0.45));
         c = new GridBagConstraints();
         c.weightx = 1.0d;
         c.weighty = 1.0d;
@@ -178,7 +209,7 @@ public class BrowserFrame extends JFrame {
                 updateTreeSelection();
             }
         });
-        horizontalSplitPane.setLeftComponent(new JScrollPane(mibTree));
+        horizontalSplitPane.setLeftComponent(initializeTree());
 
         // Add description area & SNMP panel
         verticalSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
@@ -191,6 +222,130 @@ public class BrowserFrame extends JFrame {
         horizontalSplitPane.setRightComponent(verticalSplitPane);
     }
 
+    /**
+     * Creates and initializes the Tree Panel.
+     *
+     * @return the panel containing the Tree
+     */
+    private JPanel initializeTree()
+    {
+        JPanel  treePanel  = new JPanel();
+        JPanel  fieldPanel = new JPanel();
+        fieldPanel.setLayout(new GridBagLayout());
+        GridBagConstraints  c;
+        int gridy = 1;
+
+        // Add Name Search field
+        c = new GridBagConstraints();
+        c.gridy = gridy;
+        c.fill = GridBagConstraints.BOTH;
+        c.insets = DEFAULT_INSETS;
+        fieldPanel.add(nameSearchLabel, c);
+        c = new GridBagConstraints();
+        c.gridx = 1;
+        c.gridy = gridy;
+        c.weightx = 0.1d;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = DEFAULT_INSETS;
+        fieldPanel.add(nameSearchField, c);
+        c = new GridBagConstraints();
+        c.gridx = 2;
+        c.gridy = gridy;
+        c.weightx = 0.1d;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = DEFAULT_INSETS;
+        fieldPanel.add(nameSearchButton, c);
+        gridy++;
+
+        // Add OID Search field
+        c = new GridBagConstraints();
+        c.gridy = gridy;
+        c.fill = GridBagConstraints.BOTH;
+        c.insets = DEFAULT_INSETS;
+        fieldPanel.add(oidSearchLabel, c);
+        c = new GridBagConstraints();
+        c.gridx = 1;
+        c.gridy = gridy;
+        c.weightx = 0.1d;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = DEFAULT_INSETS;
+        fieldPanel.add(oidSearchField, c);
+        c = new GridBagConstraints();
+        c.gridx = 2;
+        c.gridy = gridy;
+        c.weightx = 0.1d;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = DEFAULT_INSETS;
+        fieldPanel.add(oidSearchButton, c);
+        gridy++;
+        treePanel.add(fieldPanel);        
+
+        // Add MIB tree
+        mibTree = MibTreeBuilder.getInstance().getTree();
+        mibTree.addTreeSelectionListener(new TreeSelectionListener() {
+            public void valueChanged(TreeSelectionEvent e) {
+                updateTreeSelection();
+            }
+        });
+        JScrollPane treePane = new JScrollPane(mibTree);
+        // TODO size
+//        treePane.setPreferredSize(new Dimension(treePanel.getSize()));
+        treePane.setPreferredSize(new Dimension(430, 633));
+        treePanel.add(treePane);
+        
+        // Associate labels
+        nameSearchLabel.setLabelFor(nameSearchField);
+        oidSearchLabel.setLabelFor(oidSearchField);
+
+        // Add DnD action listeners
+        DropTarget dropTarget = new DropTarget();
+        dropTarget.setComponent(mibTree);
+        try {
+			dropTarget.addDropTargetListener(new DropTargetListener() {
+				public void dragEnter(DropTargetDragEvent e){} 
+				public void dragExit(DropTargetEvent e){} 
+				public void dragOver(DropTargetDragEvent e){}
+				public void dropActionChanged(DropTargetDragEvent e){} 
+			    public void drop(DropTargetDropEvent e) {
+					try
+					{
+						Transferable transfer = e.getTransferable();
+						if (transfer.isDataFlavorSupported(DataFlavor.javaFileListFlavor))
+						{
+							e.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
+							List fileList
+							= (List)(transfer.getTransferData(DataFlavor.javaFileListFlavor));
+							loadMib(fileList);
+						}
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+			    }
+			});
+		} catch (TooManyListenersException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        
+        // Add button action listeners
+        nameSearchButton.setToolTipText("Search Name and Expand Tree");
+        nameSearchButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	searchName();
+            }
+        });
+        
+        oidSearchButton.setToolTipText("Search OID and Expand Tree");
+        oidSearchButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	searchOID();
+            }
+        });
+
+
+        return treePanel;
+    }
+    
     /**
      * Initializes the frame menu.
      */
@@ -294,6 +449,22 @@ public class BrowserFrame extends JFrame {
             menuBar.getMenu(i).setEnabled(!blocked);
         }
         snmpPanel.setBlocked(blocked);
+    }
+
+    /**
+     * Opens the load MIB files.
+     * @param fileList MIB files.
+     */
+    protected void loadMib(List fileList) {
+        Loader        loader;
+        File[] files = (File[]) fileList.toArray(new File[fileList.size()]);
+
+        if (files.length > 0) {
+            currentDir = files[0].getParentFile();
+            descriptionArea.setText("");
+            loader = new Loader(files);
+            loader.start();
+        }
     }
 
     /**
@@ -472,6 +643,150 @@ public class BrowserFrame extends JFrame {
         LicenseDialog  dialog = new LicenseDialog(this);
 
         dialog.setVisible(true);
+    }
+
+    /**
+     * Search Name and Expand Tree.
+     */
+    protected void searchName()
+    {
+        // Search tree node
+    	String name = nameSearchField.getText();
+        MibNode searchedNode = searchMibNodeByName(name);
+
+        // Select tree node
+        if (searchedNode == null)
+        {
+            mibTree.clearSelection();
+            return;
+        }
+        TreePath path = new TreePath(searchedNode.getPath());
+        mibTree.expandPath(path);
+        mibTree.scrollPathToVisible(path);
+        mibTree.setSelectionPath(path);
+        mibTree.repaint();
+    }
+    
+    /**
+     * Search OID and Expand Tree.
+     */
+    protected void searchOID()
+    {
+        // Search tree node
+    	String oid = oidSearchField.getText();
+        MibNode searchedNode = searchMibNodeByOID(oid);
+
+        // Select tree node
+        if (searchedNode == null)
+        {
+            mibTree.clearSelection();
+            return;
+        }
+        TreePath path = new TreePath(searchedNode.getPath());
+        mibTree.expandPath(path);
+        mibTree.scrollPathToVisible(path);
+        mibTree.setSelectionPath(path);
+        mibTree.repaint();
+    }
+    
+    /**
+     * Search MibNode by name.
+     * 
+     * @param name
+     * @return Searched MibNode, or null if not found.
+     */
+    private MibNode searchMibNodeByName(String name)
+    {
+        MibNode         root = (MibNode) mibTree.getModel().getRoot();
+        MibValueSymbol  symbol = null;
+
+    	Enumeration e = root.children();
+    	while (e.hasMoreElements())
+    	{
+    		MibNode mib = (MibNode)e.nextElement();
+    		MibNode real = getRealMibNode(mib);
+            if (real == null)
+            {
+            	continue;
+            }
+            symbol = (MibValueSymbol) real.getSymbol().getMib().getSymbol(name);
+            if (symbol != null)
+            {
+            	break;
+            }
+    	}
+
+        if (symbol == null)
+        {
+            return null;
+        }
+
+        // Select tree node
+        MibNode searchedNode = MibTreeBuilder.getInstance().getNode(symbol);
+        return searchedNode;
+    }
+    
+    /**
+     * Search MibNode by OID.
+     * 
+     * @param oid
+     * @return Searched MibNode, or null if not found.
+     */
+    private MibNode searchMibNodeByOID(String oid)
+    {
+        MibNode         root = (MibNode) mibTree.getModel().getRoot();
+        MibValueSymbol  symbol = null;
+
+    	Enumeration e = root.children();
+    	while (e.hasMoreElements())
+    	{
+    		MibNode mib = (MibNode)e.nextElement();
+    		MibNode real = getRealMibNode(mib);
+            if (real == null)
+            {
+            	continue;
+            }
+            symbol = real.getSymbol().getMib().getSymbolByOid(oid);
+            if (symbol != null)
+            {
+            	break;
+            }
+    	}
+
+        if (symbol == null)
+        {
+            return null;
+        }
+
+        // Select tree node
+        MibNode searchedNode = MibTreeBuilder.getInstance().getNode(symbol);
+        return searchedNode;
+    }
+    
+    private MibNode getRealMibNode(MibNode node)
+    {
+    	if (   node.getSymbol() != null
+        	&& node.getSymbol().getMib() != null)
+        {
+    		return node;
+        }
+
+    	if (node.isLeaf() == true)
+    	{
+    		return null;
+    	}
+    	
+    	Enumeration e = node.children();
+    	while (e.hasMoreElements())
+    	{
+    		MibNode child = (MibNode)e.nextElement();
+    		MibNode realMib = getRealMibNode(child);
+    		if (realMib != null)
+    		{
+    			return realMib;
+    		}
+    	}
+    	return null;
     }
 
     /**
