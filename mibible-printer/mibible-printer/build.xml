@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+
+  BUILD INSTRUCTIONS
+
+  The following build properties are available (specify on the
+  command-line with -Dname=value):
+
+    build.name
+        The base name of the build. Defaults to "mibible-printer".
+
+    build.version
+        The build version number.
+
+    build.debug
+        The debug build flag. Set to any value to compile with debug
+        information. By default this flag is off.
+
+-->
+<project name="mibible-printer" default="compile" basedir=".">
+
+
+<!-- INITIALIZATION -->
+  <path id="project.class.path">
+    <fileset dir="lib"
+             includes="*.jar" />
+  </path>
+
+  <target name="init">
+    <tstamp>
+      <format property="build.printdate"
+              pattern="yyyy-MM-dd" />
+    </tstamp>
+    <property name="build.date" value="${DSTAMP}" />
+    <property name="build.name" value="mibible-printer" />
+    <property name="build.version" value="0.1.0" />
+  </target>
+
+
+<!-- TOP-LEVEL TARGETS -->
+  <target name="all"
+          depends="compile,doc" />
+
+  <target name="compile"
+          depends="init,compile-clean,compile-java" />
+
+  <target name="doc"
+          depends="init,doc-clean,doc-java" />
+
+
+<!-- COMPILATION TARGETS -->
+  <target name="compile-clean">
+    <delete quiet="true">
+      <fileset dir="classes" />
+      <fileset dir="lib"
+               includes="mibible-printer*.jar" />
+    </delete>
+    <mkdir dir="classes" />
+  </target>
+
+  <target name="compile-java" 
+          depends="compile-java-optimized,compile-java-debug">
+    <jar jarfile="lib/${build.name}-${build.version}.jar">
+      <fileset dir="."
+               includes="README.txt" />
+      <fileset dir="."
+               includes="LICENSE.txt" />
+      <fileset dir="classes" />
+    </jar>
+  </target>
+
+  <target name="compile-java-optimized" unless="build.debug">
+    <javac srcdir="src/java"
+           destdir="classes"
+           classpathref="project.class.path"
+           source="1.2"
+           target="1.2"
+           debug="off"
+           optimize="on"
+           deprecation="on" />
+  </target>
+
+  <target name="compile-java-debug" if="build.debug">
+    <javac srcdir="src/java"
+           destdir="classes"
+           classpathref="project.class.path"
+           source="1.2"
+           target="1.2"
+           debug="on"
+           deprecation="on" />
+  </target>
+
+
+<!-- DOCUMENTATION TARGETS -->
+  <target name="doc-clean">
+    <delete dir="doc" quiet="true" />
+    <mkdir dir="doc" />
+    <mkdir dir="doc/api" />
+  </target>
+
+  <target name="doc-java">
+    <javadoc packagenames="com.googlecode.mibible.printer.*"
+             sourcepath="src/java"
+             destdir="doc/api"
+             classpath="classes"
+             classpathref="project.class.path"
+             version="false"
+             use="true"
+             author="false"
+             windowtitle="mibible printer ${build.version} API documentation"
+             failonerror="true" />
+  </target>
+
+</project>
