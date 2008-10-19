@@ -60,6 +60,10 @@
 
   <target name="compile-java" 
           depends="compile-java-optimized,compile-java-debug">
+    <copy todir="classes" overwrite="true">
+      <fileset dir="src/java"
+               includes="**/*.gif" />
+    </copy>
     <jar jarfile="lib/${build.name}-${build.version}.jar">
       <fileset dir="."
                includes="README.txt" />

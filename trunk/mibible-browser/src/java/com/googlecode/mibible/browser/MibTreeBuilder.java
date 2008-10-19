@@ -92,6 +92,7 @@ public class MibTreeBuilder {
         mibTree.setToolTipText("");
         mibTree.getSelectionModel().setSelectionMode(mode);
         mibTree.setRootVisible(false);
+        mibTree.setCellRenderer(new MibTreeCellRenderer());
     }
 
     /**
