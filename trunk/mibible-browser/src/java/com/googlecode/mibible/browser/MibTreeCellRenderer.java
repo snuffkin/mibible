@@ -156,30 +156,24 @@ public class MibTreeCellRenderer extends DefaultTreeCellRenderer
     if (!tree.isEnabled()) {
         setEnabled(false);
         if (leaf) {
-        setDisabledIcon(convertMibNodeToIcon((MibNode)value, getDefaultLeafIcon()));
-//        setDisabledIcon(getLeafIcon());
+            setDisabledIcon(convertMibNodeToIcon((MibNode)value, getDefaultLeafIcon()));
         } else if (expanded) {
         	setDisabledIcon(convertMibNodeToIcon((MibNode)value, getOpenIcon()));
-//        setDisabledIcon(getOpenIcon());
         } else {
         	setDisabledIcon(convertMibNodeToIcon((MibNode)value, getClosedIcon()));
-//        setDisabledIcon(getClosedIcon());
         }
     }
     else {
         setEnabled(true);
         if (leaf) {
-        setIcon(convertMibNodeToIcon((MibNode)value, getDefaultLeafIcon()));
-//        setIcon(getLeafIcon());
+            setIcon(convertMibNodeToIcon((MibNode)value, getDefaultLeafIcon()));
         } else if (expanded) {
-        setIcon(convertMibNodeToIcon((MibNode)value, getOpenIcon()));
-//        setIcon(getOpenIcon());
+            setIcon(convertMibNodeToIcon((MibNode)value, getOpenIcon()));
         } else {
             setIcon(convertMibNodeToIcon((MibNode)value, getClosedIcon()));
-//        setIcon(getClosedIcon());
         }
     }
-       setComponentOrientation(tree.getComponentOrientation());
+    setComponentOrientation(tree.getComponentOrientation());
         
     selected = sel;
 
@@ -190,6 +184,7 @@ public class MibTreeCellRenderer extends DefaultTreeCellRenderer
      * convert MibNode To Tree Icon for Rendering.
      * 
      * @param node MibNode
+     * @param defaultIcon MibNodeに対応するIconがない場合に利用するIcon
      * @return Icon
      */
     private Icon convertMibNodeToIcon(MibNode node, Icon defaultIcon)
@@ -225,16 +220,16 @@ public class MibTreeCellRenderer extends DefaultTreeCellRenderer
             SnmpAccess access = objectType.getAccess();
             MibType syntax = objectType.getSyntax();
             
-             // SequenceType、SequenceOfTypeはsyntaxでアイコンを変化させる
+            // SequenceType、SequenceOfTypeはsyntaxでアイコンを変化させる
             if (syntax instanceof SequenceType)
             {
                 // SequenceType
-                 return mibIcon_ObjectType_SequenceType;
+                return mibIcon_ObjectType_SequenceType;
             }
             else if (syntax instanceof SequenceOfType)
             {
                 // SequenceOfType
-                 return mibIcon_ObjectType_SequenceOfType;
+                return mibIcon_ObjectType_SequenceOfType;
             }
             
             // ObjectTypeはaccessibleでアイコンを変化させる
@@ -261,18 +256,18 @@ public class MibTreeCellRenderer extends DefaultTreeCellRenderer
             else
             {
                 // default
-               return mibIcon_ObjectType;
+                return mibIcon_ObjectType;
             }
         }
         else if (type instanceof SnmpNotificationGroup)
         {
             // SnmpNotificationGroup
-             return mibIcon_NotificationGroup;
+            return mibIcon_NotificationGroup;
         }
         else if (type instanceof SnmpObjectGroup)
         {
             // SnmpObjectGroup
-             return mibIcon_ObjectGroup;
+            return mibIcon_ObjectGroup;
         }
         else
         {
