@@ -17,7 +17,7 @@
         information. By default this flag is off.
 
 -->
-<project name="mibible-browser" default="all" basedir=".">
+<project name="mibible-browser" default="compile" basedir=".">
 
 
 <!-- INITIALIZATION -->

@@ -46,7 +46,7 @@ public class Browser {
         "A graphical SNMP MIB file browser. This program comes with\n" +
         "ABSOLUTELY NO WARRANTY; for details see the LICENSE.txt file.\n" +
         "\n" +
-        "Syntax: MibbleBrowser [<file(s) or URL(s)>]";
+        "Syntax: browser [<file(s) or URL(s)>]";
 
     /**
      * The internal error message.
