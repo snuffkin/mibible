@@ -125,22 +125,22 @@ public class MibTreeCellRenderer extends DefaultTreeCellRenderer
                            boolean leaf, int row,
                            boolean hasFocus)
     {
-    	// convertValueToTextに渡すためのvalueを取得する
-    	Object tempValue;
-	    if (value instanceof MibNode)
-	    {
-		    tempValue = convertMibNodeToString((MibNode) value);
-		    if (tempValue == null)
-		    {
-		    	tempValue = value;
-		    }
+        // convertValueToTextに渡すためのvalueを取得する
+        Object tempValue;
+        if (value instanceof MibNode)
+        {
+            tempValue = convertMibNodeToString((MibNode) value);
+            if (tempValue == null)
+            {
+                tempValue = value;
+            }
         }
-	    else
-	    {
-	    	tempValue = value;
-	    }
-	    
-	    // Nodeのオブジェクトを表示文字列に変換する
+        else
+        {
+            tempValue = value;
+        }
+        
+        // Nodeのオブジェクトを表示文字列に変換する
         String stringValue
             = tree.convertValueToText(tempValue, sel,
                                       expanded, leaf, row, hasFocus);
@@ -179,9 +179,9 @@ public class MibTreeCellRenderer extends DefaultTreeCellRenderer
         if (leaf) {
             setDisabledIcon(convertMibNodeToIcon((MibNode)value, getDefaultLeafIcon()));
         } else if (expanded) {
-        	setDisabledIcon(convertMibNodeToIcon((MibNode)value, getOpenIcon()));
+            setDisabledIcon(convertMibNodeToIcon((MibNode)value, getOpenIcon()));
         } else {
-        	setDisabledIcon(convertMibNodeToIcon((MibNode)value, getClosedIcon()));
+            setDisabledIcon(convertMibNodeToIcon((MibNode)value, getClosedIcon()));
         }
     }
     else {
@@ -217,17 +217,17 @@ public class MibTreeCellRenderer extends DefaultTreeCellRenderer
         }
         
         // MibSymbolの場合の文字列設定
- 		if (symbol instanceof MibValueSymbol)
- 		{
- 			MibValueSymbol targetSymbol = (MibValueSymbol) symbol;
- 			MibValue value = targetSymbol.getValue();
- 			if (value instanceof ObjectIdentifierValue)
- 			{
- 				ObjectIdentifierValue oid = (ObjectIdentifierValue) value;
- 				return "[" + oid.getValue() + "] " + symbol.getName();
- 			}
- 		}
- 		return symbol.getName();
+        if (symbol instanceof MibValueSymbol)
+        {
+            MibValueSymbol targetSymbol = (MibValueSymbol) symbol;
+            MibValue value = targetSymbol.getValue();
+            if (value instanceof ObjectIdentifierValue)
+            {
+                ObjectIdentifierValue oid = (ObjectIdentifierValue) value;
+                return "[" + oid.getValue() + "] " + symbol.getName();
+            }
+        }
+        return symbol.getName();
     }
    
     /**
