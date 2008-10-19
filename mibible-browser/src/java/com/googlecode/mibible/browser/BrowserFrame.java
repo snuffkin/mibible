@@ -125,14 +125,14 @@ public class BrowserFrame extends JFrame {
     private JTree mibTree = null;
 
     /** Trap Name Search label */
-    private JLabel nameSearchLabel = new JLabel("Name"); 
+    private JLabel nameSearchLabel = new JLabel("Name:"); 
     /** Trap Name Search field */
     private JTextField nameSearchField = new JTextField("", 30);
     /** The Name Search button */
     private JButton nameSearchButton = new JButton("Search");
 
     /** Trap OID Search label */
-    private JLabel oidSearchLabel = new JLabel("OID"); 
+    private JLabel oidSearchLabel = new JLabel("OID:"); 
     /** Trap OID Search field */
     private JTextField oidSearchField = new JTextField("", 30);
     /** The OID Search button */
@@ -229,57 +229,57 @@ public class BrowserFrame extends JFrame {
      */
     private JPanel initializeTree()
     {
-        JPanel  treePanel  = new JPanel();
-        JPanel  fieldPanel = new JPanel();
-        fieldPanel.setLayout(new GridBagLayout());
+        JPanel  treePanel    = new JPanel();
+        GridBagLayout layout = new GridBagLayout();
+        treePanel.setLayout(layout);
         GridBagConstraints  c;
-        int gridy = 1;
 
         // Add Name Search field
         c = new GridBagConstraints();
-        c.gridy = gridy;
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = DEFAULT_INSETS;
-        fieldPanel.add(nameSearchLabel, c);
-        c = new GridBagConstraints();
         c.gridx = 1;
-        c.gridy = gridy;
-        c.weightx = 0.1d;
-        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridy = 1;
+        c.fill = GridBagConstraints.NONE;
         c.insets = DEFAULT_INSETS;
-        fieldPanel.add(nameSearchField, c);
+        treePanel.add(nameSearchLabel, c);
+        
         c = new GridBagConstraints();
         c.gridx = 2;
-        c.gridy = gridy;
-        c.weightx = 0.1d;
+        c.weightx = 1.0d;
+        c.gridy = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = DEFAULT_INSETS;
-        fieldPanel.add(nameSearchButton, c);
-        gridy++;
+        treePanel.add(nameSearchField, c);
+        
+        c = new GridBagConstraints();
+        c.gridx = 3;
+        c.gridy = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.insets = DEFAULT_INSETS;
+        treePanel.add(nameSearchButton, c);
 
         // Add OID Search field
         c = new GridBagConstraints();
-        c.gridy = gridy;
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = DEFAULT_INSETS;
-        fieldPanel.add(oidSearchLabel, c);
-        c = new GridBagConstraints();
         c.gridx = 1;
-        c.gridy = gridy;
-        c.weightx = 0.1d;
-        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridy = 2;
+        c.fill = GridBagConstraints.NONE;
         c.insets = DEFAULT_INSETS;
-        fieldPanel.add(oidSearchField, c);
+        treePanel.add(oidSearchLabel, c);
+        
         c = new GridBagConstraints();
         c.gridx = 2;
-        c.gridy = gridy;
-        c.weightx = 0.1d;
+        c.gridy = 2;
+        c.weightx = 1.0d;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = DEFAULT_INSETS;
-        fieldPanel.add(oidSearchButton, c);
-        gridy++;
-        treePanel.add(fieldPanel);        
-
+        treePanel.add(oidSearchField, c);
+        
+        c = new GridBagConstraints();
+        c.gridx = 3;
+        c.gridy = 2;
+        c.fill = GridBagConstraints.NONE;
+        c.insets = DEFAULT_INSETS;
+        treePanel.add(oidSearchButton, c);
+        
         // Add MIB tree
         mibTree = MibTreeBuilder.getInstance().getTree();
         mibTree.addTreeSelectionListener(new TreeSelectionListener() {
@@ -288,10 +288,17 @@ public class BrowserFrame extends JFrame {
             }
         });
         JScrollPane treePane = new JScrollPane(mibTree);
-        // TODO size
-//        treePane.setPreferredSize(new Dimension(treePanel.getSize()));
         treePane.setPreferredSize(new Dimension(430, 633));
-        treePanel.add(treePane);
+
+        c = new GridBagConstraints();
+        c.gridx = 1;
+        c.gridy = 3;
+        c.gridwidth = 3;
+        c.weightx = 1.0d;
+        c.weighty = 1.0d;
+        c.fill = GridBagConstraints.BOTH;
+        c.insets = DEFAULT_INSETS;
+        treePanel.add(treePane, c);        
         
         // Associate labels
         nameSearchLabel.setLabelFor(nameSearchField);
