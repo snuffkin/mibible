@@ -55,7 +55,7 @@ public class Printer {
         "Prints the contents of an SNMP MIB file. This program comes with\n" +
         "ABSOLUTELY NO WARRANTY; for details see the LICENSE.txt file.\n" +
         "\n" +
-        "Syntax: MibblePrinter [--mib|--oid|--debug] <file(s) or URL(s)>\n" +
+        "Syntax: printer [--mib|--oid|--debug] <file(s) or URL(s)>\n" +
         "\n" +
         "    --mib     Prints a formatted and indented version of the MIB.\n" +
         "              This is the default printing mode.\n" +
