@@ -301,44 +301,44 @@ public class BrowserFrame extends JFrame {
         DropTarget dropTarget = new DropTarget();
         dropTarget.setComponent(mibTree);
         try {
-			dropTarget.addDropTargetListener(new DropTargetListener() {
-				public void dragEnter(DropTargetDragEvent e){} 
-				public void dragExit(DropTargetEvent e){} 
-				public void dragOver(DropTargetDragEvent e){}
-				public void dropActionChanged(DropTargetDragEvent e){} 
-			    public void drop(DropTargetDropEvent e) {
-					try
-					{
-						Transferable transfer = e.getTransferable();
-						if (transfer.isDataFlavorSupported(DataFlavor.javaFileListFlavor))
-						{
-							e.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
-							List fileList
-							= (List)(transfer.getTransferData(DataFlavor.javaFileListFlavor));
-							loadMib(fileList);
-						}
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-			    }
-			});
-		} catch (TooManyListenersException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+            dropTarget.addDropTargetListener(new DropTargetListener() {
+                public void dragEnter(DropTargetDragEvent e){} 
+                public void dragExit(DropTargetEvent e){} 
+                public void dragOver(DropTargetDragEvent e){}
+                public void dropActionChanged(DropTargetDragEvent e){} 
+                public void drop(DropTargetDropEvent e) {
+                    try
+                    {
+                        Transferable transfer = e.getTransferable();
+                        if (transfer.isDataFlavorSupported(DataFlavor.javaFileListFlavor))
+                        {
+                            e.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
+                            List fileList
+                            = (List)(transfer.getTransferData(DataFlavor.javaFileListFlavor));
+                            loadMib(fileList);
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
+        } catch (TooManyListenersException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
         
         // Add button action listeners
         nameSearchButton.setToolTipText("Search Name and Expand Tree");
         nameSearchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	searchName();
+                searchName();
             }
         });
         
         oidSearchButton.setToolTipText("Search OID and Expand Tree");
         oidSearchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	searchOID();
+                searchOID();
             }
         });
 
@@ -651,7 +651,7 @@ public class BrowserFrame extends JFrame {
     protected void searchName()
     {
         // Search tree node
-    	String name = nameSearchField.getText();
+        String name = nameSearchField.getText();
         MibNode searchedNode = searchMibNodeByName(name);
 
         // Select tree node
@@ -673,7 +673,7 @@ public class BrowserFrame extends JFrame {
     protected void searchOID()
     {
         // Search tree node
-    	String oid = oidSearchField.getText();
+        String oid = oidSearchField.getText();
         MibNode searchedNode = searchMibNodeByOID(oid);
 
         // Select tree node
@@ -700,21 +700,21 @@ public class BrowserFrame extends JFrame {
         MibNode         root = (MibNode) mibTree.getModel().getRoot();
         MibValueSymbol  symbol = null;
 
-    	Enumeration e = root.children();
-    	while (e.hasMoreElements())
-    	{
-    		MibNode mib = (MibNode)e.nextElement();
-    		MibNode real = getRealMibNode(mib);
+        Enumeration e = root.children();
+        while (e.hasMoreElements())
+        {
+            MibNode mib = (MibNode)e.nextElement();
+            MibNode real = getRealMibNode(mib);
             if (real == null)
             {
-            	continue;
+                continue;
             }
             symbol = (MibValueSymbol) real.getSymbol().getMib().getSymbol(name);
             if (symbol != null)
             {
-            	break;
+                break;
             }
-    	}
+        }
 
         if (symbol == null)
         {
@@ -737,21 +737,21 @@ public class BrowserFrame extends JFrame {
         MibNode         root = (MibNode) mibTree.getModel().getRoot();
         MibValueSymbol  symbol = null;
 
-    	Enumeration e = root.children();
-    	while (e.hasMoreElements())
-    	{
-    		MibNode mib = (MibNode)e.nextElement();
-    		MibNode real = getRealMibNode(mib);
+        Enumeration e = root.children();
+        while (e.hasMoreElements())
+        {
+            MibNode mib = (MibNode)e.nextElement();
+            MibNode real = getRealMibNode(mib);
             if (real == null)
             {
-            	continue;
+                continue;
             }
             symbol = real.getSymbol().getMib().getSymbolByOid(oid);
             if (symbol != null)
             {
-            	break;
+                break;
             }
-    	}
+        }
 
         if (symbol == null)
         {
@@ -765,28 +765,28 @@ public class BrowserFrame extends JFrame {
     
     private MibNode getRealMibNode(MibNode node)
     {
-    	if (   node.getSymbol() != null
-        	&& node.getSymbol().getMib() != null)
+        if (   node.getSymbol() != null
+            && node.getSymbol().getMib() != null)
         {
-    		return node;
+            return node;
         }
 
-    	if (node.isLeaf() == true)
-    	{
-    		return null;
-    	}
-    	
-    	Enumeration e = node.children();
-    	while (e.hasMoreElements())
-    	{
-    		MibNode child = (MibNode)e.nextElement();
-    		MibNode realMib = getRealMibNode(child);
-    		if (realMib != null)
-    		{
-    			return realMib;
-    		}
-    	}
-    	return null;
+        if (node.isLeaf() == true)
+        {
+            return null;
+        }
+        
+        Enumeration e = node.children();
+        while (e.hasMoreElements())
+        {
+            MibNode child = (MibNode)e.nextElement();
+            MibNode realMib = getRealMibNode(child);
+            if (realMib != null)
+            {
+                return realMib;
+            }
+        }
+        return null;
     }
 
     /**
