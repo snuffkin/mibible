@@ -16,7 +16,14 @@ public class OidNumberFilter extends PrintFilter
 		String ret = "";
 		while (tmpOid != null)
 		{
-			ret = "." + tmpOid.getValue() + ret;
+			if (ret.isEmpty())
+			{
+				ret = String.valueOf(tmpOid.getValue());
+			}
+			else
+			{
+				ret = tmpOid.getValue() + "." + ret;
+			}
 			tmpOid = tmpOid.getParent();
 		}
 		
