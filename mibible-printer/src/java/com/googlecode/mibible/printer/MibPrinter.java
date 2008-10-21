@@ -5,7 +5,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+
+import com.googlecode.mibible.printer.filter.DetailStringFilter;
+import com.googlecode.mibible.printer.filter.ObjectNameFilter;
+import com.googlecode.mibible.printer.filter.ObjectValueFilter;
+import com.googlecode.mibible.printer.filter.OidNumberFilter;
+import com.googlecode.mibible.printer.filter.OidStringFilter;
+import com.googlecode.mibible.printer.filter.PrintFilter;
 
 import net.percederberg.mibble.Mib;
 import net.percederberg.mibble.MibLoader;
@@ -23,7 +32,6 @@ import net.percederberg.mibble.value.ObjectIdentifierValue;
  */
 public class MibPrinter
 {
-
 	/** ヘルプ文字列 */
 	private static final String COMMAND_HELP
 	    = "Usage: mibprinter <format> <file or URL>\n";
@@ -35,15 +43,6 @@ public class MibPrinter
 	private static final int ARGS_FORMAT = 0;
 	/**  */
 	private static final int ARGS_TARGET = 1;
-	
-	/**  */
-	private static final String OPTION_OID_NUMBER = "%on";
-	/**  */
-	private static final String OPTION_OID_STRING = "%os";
-	/**  */
-	private static final String OPTION_NUMBER = "%n";
-	/**  */
-	private static final String OPTION_STRING = "%s";
 	
 	/**
 	 * @param args
@@ -61,43 +60,22 @@ public class MibPrinter
 		String format = args[ARGS_FORMAT];
 		// 引数に指定された「file or URL」を取得する
 		String target = args[ARGS_TARGET];
-		// MIBを読む込むクラス
-		MibLoader  loader = new MibLoader();
-		
-        Mib  mib = null; // 読み込んだMIBオブジェクト
-        URL  url;        // 読み込むURL
-        File file;       // 読み込むファイル
         
-        // 引数に指定した文字列がURLかファイル名か判定する
+		// MIB出力クラス
+        MibPrinter printer = null;
         try
         {
-            url = new URL(target);
-        }
-        catch (MalformedURLException exception)
-        {
-            url = null;
-        }
-        
-        // MIBを読み込む
-        try
-        {
-            if (url == null)
-            {
-                // ファイルからMIBを読み込む
-                file = new File(target);
-                loader.addDir(file.getParentFile());
-                mib = loader.load(file);
-            }
-            else
+            // MIBを読み込む
+            try
             {
                 // URLからMIBを読み込む
-                mib = loader.load(url);
+            	URL url = new URL(target);
+            	printer = new MibPrinter(url);
             }
-            
-            // warningが発生した場合、エラー出力する
-            if (mib.getLog().warningCount() > 0)
+            catch (MalformedURLException exception)
             {
-                mib.getLog().printTo(System.err);
+                // ファイルからMIBを読み込む
+            	printer = new MibPrinter(new File(target));
             }
         }
         catch (FileNotFoundException ex)
@@ -122,29 +100,49 @@ public class MibPrinter
         }
 
         // MIB Treeを出力する
-        MibPrinter printer = new MibPrinter(loader);
         printer.printMibTree(format);
 	}
 	
-	/** MIBを読む込むクラス */
-	MibLoader  loader = new MibLoader();
+	////////////////////　以下、クラス本体　////////////////////
 	
-	public MibPrinter(MibLoader loader)
+	/** 読み込んだMIB */
+	private Mib mib;
+	/** MIBのrootオブジェクト */
+	private ObjectIdentifierValue rootOid;
+	/** MIBのrootオブジェクト */
+	private List<PrintFilter> filterList = new ArrayList<PrintFilter>();
+	
+	public MibPrinter(File file) throws IOException, MibLoaderException
 	{
-		this.loader = loader;
-	}
-	public void printMibTree(String format)
-	{
-		Mib[] mibs = this.loader.getAllMibs();
-		
-		// エラーチェック
-        if (mibs.length <= 0)
-        {
-            System.out.println("no MIB data");
-            return;
-        }
+		MibLoader loader = new MibLoader();
+        loader.addDir(file.getParentFile());
+        this.mib = loader.load(file);
+        this.rootOid = getRootOid(this.mib);
         
-        Mib mib = loader.getAllMibs()[0];
+        // TOOD 高速化
+        this.filterList.add(new DetailStringFilter());
+        this.filterList.add(new ObjectNameFilter());
+        this.filterList.add(new ObjectValueFilter());
+        this.filterList.add(new OidNumberFilter());
+        this.filterList.add(new OidStringFilter());
+	}
+	
+	public MibPrinter(URL url) throws IOException, MibLoaderException
+	{
+		MibLoader loader = new MibLoader();
+        this.mib = loader.load(url);
+        this.rootOid = getRootOid(this.mib);
+        
+        // TOOD 高速化
+        this.filterList.add(new DetailStringFilter());
+        this.filterList.add(new ObjectNameFilter());
+        this.filterList.add(new ObjectValueFilter());
+        this.filterList.add(new OidNumberFilter());
+        this.filterList.add(new OidStringFilter());
+	}
+	
+	private static ObjectIdentifierValue getRootOid(Mib mib)
+	{
         Iterator iter = mib.getAllSymbols().iterator();
         ObjectIdentifierValue  root = null;
         while (root == null && iter.hasNext())
@@ -162,14 +160,19 @@ public class MibPrinter
         if (root == null)
         {
         	System.out.println("no OID value");
-            return;
+            return null;
         }
 
         while (root.getParent() != null)
         {
             root = root.getParent();
         }
-        printOid(root);
+        return root;
+	}
+	
+	public void printMibTree(String format)
+	{
+        printOid(this.rootOid, format);
 	}
 	
     /**
@@ -177,13 +180,22 @@ public class MibPrinter
      *
      * @param oid            the OID node to print
      */
-    private static void printOid(ObjectIdentifierValue oid)
+    private void printOid(ObjectIdentifierValue oid, String format)
     {
-        System.out.println(oid.getName());
-//        System.out.println(oid.toDetailString());
+    	String output = format;
+    	for (PrintFilter filter : this.filterList)
+    	{
+    		String key = filter.getFilterKey();
+    		if (format.contains(key))
+    		{
+    			String printString = filter.getPrintString(oid);
+    			output = output.replace(key, printString);
+    		}
+    	}
+        System.out.println(output);
         for (int i = 0; i < oid.getChildCount(); i++)
         {
-            printOid(oid.getChild(i));
+            printOid(oid.getChild(i), format);
         }
     }
 }

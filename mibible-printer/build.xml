@@ -74,8 +74,8 @@
            destdir="classes"
            classpathref="project.class.path"
            encoding="UTF-8"
-           source="1.2"
-           target="1.2"
+           source="5"
+           target="5"
            debug="off"
            optimize="on"
            deprecation="on" />
@@ -86,8 +86,8 @@
            destdir="classes"
            classpathref="project.class.path"
            encoding="UTF-8"
-           source="1.2"
-           target="1.2"
+           source="5"
+           target="5"
            debug="on"
            deprecation="on" />
   </target>
