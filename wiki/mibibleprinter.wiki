@@ -18,6 +18,6 @@ mibible/binで以下のコマンドを実行することで利用できる。
   * %type -> OBJECT-TYPE
 
 例)
-mibprinter "%text:%Num(%type)" IF-MIB
+mibprinter "%text:%Num(%type)" ..\mib\ietf\IF-MIB
 を実行すると、以下のような形式でMIBツリーが表示される。
   ifOperStatus:1.3.6.1.2.1.2.2.1.8(OBJECT-TYPE)
