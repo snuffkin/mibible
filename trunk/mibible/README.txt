@@ -18,3 +18,6 @@ mibible README
          9 parserとprinterの分離
         11 mibibleパッケージの取得(Task)
         14 ウィンドウサイズ変更時にツリーのレイアウトが崩れる
+
+  2008/10/23 ver 0.2.0 release
+         8 PrintされるMIBツリーのフォーマットを変更したい
