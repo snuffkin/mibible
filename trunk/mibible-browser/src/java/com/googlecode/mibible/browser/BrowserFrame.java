@@ -84,7 +84,7 @@ public class BrowserFrame extends JFrame {
     /**
      * The browser application.
      */
-    private Browser browser;
+    private MibBrowser browser;
 
     /**
      * The menu bar.
@@ -153,7 +153,7 @@ public class BrowserFrame extends JFrame {
      *
      * @param browser        the browser application
      */
-    public BrowserFrame(Browser browser) {
+    public BrowserFrame(MibBrowser browser) {
         String  dir;
 
         this.browser = browser;
