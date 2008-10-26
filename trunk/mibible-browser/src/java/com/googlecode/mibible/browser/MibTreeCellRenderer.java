@@ -49,6 +49,7 @@ public class MibTreeCellRenderer extends DefaultTreeCellRenderer
     {
         URL url;
         
+        // MIBツリーで利用するアイコンを読み込む
         url = MibTreeCellRenderer.class.getResource("SnmpNotificationGroup.gif");
         if (url != null)
         {
@@ -145,9 +146,9 @@ public class MibTreeCellRenderer extends DefaultTreeCellRenderer
             = tree.convertValueToText(tempValue, sel,
                                       expanded, leaf, row, hasFocus);
 
-       this.tree = tree;
-    this.hasFocus = hasFocus;
-    setText(stringValue);
+        this.tree = tree;
+        this.hasFocus = hasFocus;
+        setText(stringValue);
 
        Color fg = null;
 /**       isDropCell = false;

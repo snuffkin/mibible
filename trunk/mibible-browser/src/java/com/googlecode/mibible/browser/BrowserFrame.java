@@ -93,9 +93,19 @@ public class BrowserFrame extends JFrame
     private JMenuBar getMenu()
     {
     	JMenuBar menuBar = new JMenuBar();
+        
+        // Fileメニューを追加する
+        menuBar.add(getFileMenu());
+        // Helpメニューを追加する
+        menuBar.add(getHelpMenu());
     	
-        // Create file menu
-    	JMenu file = new JMenu("File");
+    	return menuBar;
+    }
+    
+    private JMenu getFileMenu()
+    {
+        // Create File menu
+    	JMenu menu = new JMenu("File");
         
     	// Create Open MIB item
     	JMenuItem open = new JMenuItem("Open MIB...");
@@ -105,7 +115,7 @@ public class BrowserFrame extends JFrame
 //                loadMib();
             }
         });
-        file.add(open);
+        menu.add(open);
         
     	// Create Close MIB item
         JMenuItem close = new JMenuItem("Close MIB");
@@ -115,10 +125,10 @@ public class BrowserFrame extends JFrame
 //                unloadMib();
             }
         });
-        file.add(close);
+        menu.add(close);
         
         // Create Separator
-        file.addSeparator();
+        menu.addSeparator();
         
     	// Create Exit item
         JMenuItem exit = new JMenuItem("Exit");
@@ -127,12 +137,27 @@ public class BrowserFrame extends JFrame
                 System.exit(0);
             }
         });
-        file.add(exit);
+        menu.add(exit);
         
-        // Add file to menu bar
-        menuBar.add(file);
-    	
-    	return menuBar;
+    	return menu;
+    }
+    
+    private JMenu getHelpMenu()
+    {
+        // Create Help menu
+    	JMenu menu = new JMenu("Help");
+        
+    	// Create Open MIB item
+    	JMenuItem about = new JMenuItem("About mibible");
+    	about.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	// TODO
+//                loadMib();
+            }
+        });
+        menu.add(about);
+        
+    	return menu;
     }
     
     private JPanel getTreePanel(Mediator mediator)
