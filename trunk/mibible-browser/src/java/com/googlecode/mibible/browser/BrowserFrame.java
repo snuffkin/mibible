@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -18,19 +19,17 @@ import javax.swing.JSplitPane;
 
 public class BrowserFrame extends JFrame
 {
-    /** The default component insets */
+    /** デフォルトのInsets */
     public static final Insets DEFAULT_INSETS = new Insets(2, 5, 2, 5);
+
+	/** Mediator */
+	private Mediator mediator = new Mediator();
 
     public void initialize()
     {
-    	// Frameの描画領域
-        Rectangle bounds = new Rectangle();
-        Dimension size;
-        // レイアウト
-        GridBagConstraints  c;
-
     	// Frameの初期表示領域の設定
-        size = Toolkit.getDefaultToolkit().getScreenSize();
+        Rectangle bounds = new Rectangle();
+        Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
         bounds.width = (int) (size.width * 0.8);
         bounds.height = (int) (size.height * 0.8);
         bounds.x = (size.width - bounds.width) / 2;
@@ -46,14 +45,24 @@ public class BrowserFrame extends JFrame
         // Frameにレイアウトを設定する
         getContentPane().setLayout(new GridBagLayout());
         
+        // Frame Layout
+        // +----------------------------------+
+        // | Tree Panel | Description Panel   |
+        // +            |---------------------+
+        // |            | Communication Panel |
+        // +----------------------------------+
+        
+        // レイアウト
+        GridBagConstraints  gbc;
+        
         // Frame内部を左右に分けるPaneのレイアウトを設定する
-        JSplitPane letfRightSplitPane = new JSplitPane();
-        letfRightSplitPane.setDividerLocation((int) (bounds.width * 0.45));
-        c = new GridBagConstraints();
-        c.weightx = 1.0d;
-        c.weighty = 1.0d;
-        c.fill = GridBagConstraints.BOTH;
-        getContentPane().add(letfRightSplitPane, c);
+        JSplitPane leftRightSplitPane = new JSplitPane();
+        leftRightSplitPane.setDividerLocation((int) (bounds.width * 0.40));
+        gbc = new GridBagConstraints();
+        gbc.weightx = 1.0d;
+        gbc.weighty = 1.0d;
+        gbc.fill = GridBagConstraints.BOTH;
+        getContentPane().add(leftRightSplitPane, gbc);
 
         // 右側のPane内部をを上下に分けるPaneのレイアウトを設定する
         JSplitPane topBottomSplitPane = new JSplitPane();
@@ -62,12 +71,23 @@ public class BrowserFrame extends JFrame
         topBottomSplitPane.setOneTouchExpandable(true);
         
         // 右側のPane内部をを上下に分けるPaneの中身を設定する
-        letfRightSplitPane.setLeftComponent(getDescriptionPanel());
-        letfRightSplitPane.setRightComponent(getSnmpPanel());
+        topBottomSplitPane.setLeftComponent(getDescriptionPanel(mediator));
+        topBottomSplitPane.setRightComponent(getSnmpPanel(mediator));
         
         // Frame内部を左右に分けるPaneの中身を設定する
-        letfRightSplitPane.setLeftComponent(getTreePanel());
-        letfRightSplitPane.setRightComponent(topBottomSplitPane);
+        leftRightSplitPane.setLeftComponent(getTreePanel(mediator));
+        leftRightSplitPane.setRightComponent(topBottomSplitPane);
+        
+        // ステータスラベルを設定する
+        JLabel statusLabel = new JLabel();
+        gbc = new GridBagConstraints();
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(2, 5, 2, 5);
+        getContentPane().add(statusLabel, gbc);
+        
+        // Mediatorにコンポーネントを設定する
+        this.mediator.setStatusLabel(statusLabel);
     }
     
     private JMenuBar getMenu()
@@ -115,21 +135,21 @@ public class BrowserFrame extends JFrame
     	return menuBar;
     }
     
-    private JPanel getTreePanel()
+    private JPanel getTreePanel(Mediator mediator)
     {
-    	TreePanel panel = new TreePanel();
+    	TreePanel panel = new TreePanel(mediator);
     	panel.initialize();
     	return panel;
     }
-    private JPanel getDescriptionPanel()
+    private JPanel getDescriptionPanel(Mediator mediator)
     {
-    	DescriptionPanel panel = new DescriptionPanel();
+    	DescriptionPanel panel = new DescriptionPanel(mediator);
     	panel.initialize();
     	return panel;
     }
-    private JPanel getSnmpPanel()
+    private JPanel getSnmpPanel(Mediator mediator)
     {
-    	SnmpPanel panel = new SnmpPanel();
+    	CommunicationPanel panel = new CommunicationPanel(mediator);
     	panel.initialize();
     	return panel;
     }
