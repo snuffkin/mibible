@@ -127,9 +127,9 @@ public class MibTreeCellRenderer extends DefaultTreeCellRenderer
     {
         // convertValueToTextに渡すためのvalueを取得する
         Object tempValue;
-        if (value instanceof MibNode)
+        if (value instanceof MibTreeNode)
         {
-            tempValue = convertMibNodeToString((MibNode) value);
+            tempValue = convertMibNodeToString((MibTreeNode) value);
             if (tempValue == null)
             {
                 tempValue = value;
@@ -177,21 +177,21 @@ public class MibTreeCellRenderer extends DefaultTreeCellRenderer
     if (!tree.isEnabled()) {
         setEnabled(false);
         if (leaf) {
-            setDisabledIcon(convertMibNodeToIcon((MibNode)value, getDefaultLeafIcon()));
+            setDisabledIcon(convertMibNodeToIcon((MibTreeNode)value, getDefaultLeafIcon()));
         } else if (expanded) {
-            setDisabledIcon(convertMibNodeToIcon((MibNode)value, getOpenIcon()));
+            setDisabledIcon(convertMibNodeToIcon((MibTreeNode)value, getOpenIcon()));
         } else {
-            setDisabledIcon(convertMibNodeToIcon((MibNode)value, getClosedIcon()));
+            setDisabledIcon(convertMibNodeToIcon((MibTreeNode)value, getClosedIcon()));
         }
     }
     else {
         setEnabled(true);
         if (leaf) {
-            setIcon(convertMibNodeToIcon((MibNode)value, getDefaultLeafIcon()));
+            setIcon(convertMibNodeToIcon((MibTreeNode)value, getDefaultLeafIcon()));
         } else if (expanded) {
-            setIcon(convertMibNodeToIcon((MibNode)value, getOpenIcon()));
+            setIcon(convertMibNodeToIcon((MibTreeNode)value, getOpenIcon()));
         } else {
-            setIcon(convertMibNodeToIcon((MibNode)value, getClosedIcon()));
+            setIcon(convertMibNodeToIcon((MibTreeNode)value, getClosedIcon()));
         }
     }
     setComponentOrientation(tree.getComponentOrientation());
@@ -207,7 +207,7 @@ public class MibTreeCellRenderer extends DefaultTreeCellRenderer
      * @param node MibNode
      * @return String
      */
-    private String convertMibNodeToString(MibNode node)
+    private String convertMibNodeToString(MibTreeNode node)
     {
         // MibSymbolがnullの場合は空文字列を表示する
         MibSymbol symbol = node.getSymbol();
@@ -237,7 +237,7 @@ public class MibTreeCellRenderer extends DefaultTreeCellRenderer
      * @param defaultIcon MibNodeに対応するIconがない場合に利用するIcon
      * @return Icon
      */
-    private Icon convertMibNodeToIcon(MibNode node, Icon defaultIcon)
+    private Icon convertMibNodeToIcon(MibTreeNode node, Icon defaultIcon)
     {
         if (node == null)
         {
