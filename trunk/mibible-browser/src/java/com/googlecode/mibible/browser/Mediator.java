@@ -1,5 +1,8 @@
 package com.googlecode.mibible.browser;
 
+import java.io.File;
+import java.util.List;
+
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -52,5 +55,16 @@ public class Mediator
 		this.descriptionArea.setText("");
 	}
 
-	
+	public void openMib(File file)
+	{
+		String filenames = this.descriptionArea.getText() + "\n" + file.getAbsolutePath();
+		this.descriptionArea.setText(filenames);
+	}
+	public void openMib(List<File> files)
+	{
+		for (File file : files)
+		{
+			openMib(file);
+		}
+	}
 }

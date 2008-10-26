@@ -22,15 +22,19 @@ public class DescriptionPanel extends JPanel
 
     public void initialize()
     {
+        // レイアウトを設定する
         this.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
         
+        // Add descriptionArea
         descriptionArea.setEditable(false);
+        GridBagConstraints gbc = new GridBagConstraints();
         gbc = new GridBagConstraints();
         gbc.weightx = 1.0d;
         gbc.weighty = 1.0d;
         gbc.fill = GridBagConstraints.BOTH;
-        
         this.add(new JScrollPane(descriptionArea), gbc);
+        
+        // Mediatorにコンポーネントを設定する
+        this.mediator.setDescriptionArea(descriptionArea);
     }
 }
