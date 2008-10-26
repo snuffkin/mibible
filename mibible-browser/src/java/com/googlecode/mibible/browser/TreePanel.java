@@ -29,78 +29,84 @@ import com.googlecode.mibible.browserold.MibTreeBuilder;
 
 public class TreePanel extends JPanel
 {
-    /** MIB tree */
-    private JTree mibTree = null;
-
+	/** Mediator */
+	private Mediator mediator;
+	
     /** Name Search label */
     private JLabel nameSearchLabel = new JLabel("Name:"); 
     /** Name Search field */
-    private JTextField nameSearchField = new JTextField("", 30);
+    private JTextField nameSearchField = new JTextField(30);
     /** Name Search button */
     private JButton nameSearchButton = new JButton("Search");
 
     /** OID Search label */
     private JLabel oidSearchLabel = new JLabel("OID:"); 
     /** OID Search field */
-    private JTextField oidSearchField = new JTextField("", 30);
+    private JTextField oidSearchField = new JTextField(30);
     /** OID Search button */
     private JButton oidSearchButton = new JButton("Search");
 	
+    /** MIB tree */
+    private JTree mibTree = null;
 	
+    public TreePanel(Mediator mediator)
+    {
+    	this.mediator = mediator;
+    }
     public void initialize()
     {
         this.setLayout(new GridBagLayout());
-        GridBagConstraints  c;
+        GridBagConstraints gbc;
 
         // Add Name Search label
-        c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 1;
-        c.fill = GridBagConstraints.NONE;
-        c.insets = BrowserFrame.DEFAULT_INSETS;
-        this.add(nameSearchLabel, c);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.insets = BrowserFrame.DEFAULT_INSETS;
+        this.add(nameSearchLabel, gbc);
         
         // Add Name Search field
-        c = new GridBagConstraints();
-        c.gridx = 2;
-        c.weightx = 1.0d;
-        c.gridy = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = BrowserFrame.DEFAULT_INSETS;
-        this.add(nameSearchField, c);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 2;
+        gbc.weightx = 1.0d;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = BrowserFrame.DEFAULT_INSETS;
+        this.add(nameSearchField, gbc);
         
         // Add Name Search button
-        c = new GridBagConstraints();
-        c.gridx = 3;
-        c.gridy = 1;
-        c.fill = GridBagConstraints.NONE;
-        c.insets = BrowserFrame.DEFAULT_INSETS;
-        this.add(nameSearchButton, c);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 3;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.insets = BrowserFrame.DEFAULT_INSETS;
+        this.add(nameSearchButton, gbc);
 
         // Add OID Search label
-        c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 2;
-        c.fill = GridBagConstraints.NONE;
-        c.insets = BrowserFrame.DEFAULT_INSETS;
-        this.add(oidSearchLabel, c);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.insets = BrowserFrame.DEFAULT_INSETS;
+        this.add(oidSearchLabel, gbc);
         
         // Add OID Search field
-        c = new GridBagConstraints();
-        c.gridx = 2;
-        c.gridy = 2;
-        c.weightx = 1.0d;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = BrowserFrame.DEFAULT_INSETS;
-        this.add(oidSearchField, c);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 2;
+        gbc.gridy = 2;
+        gbc.weightx = 1.0d;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = BrowserFrame.DEFAULT_INSETS;
+        this.add(oidSearchField, gbc);
         
         // Add OID Search button
-        c = new GridBagConstraints();
-        c.gridx = 3;
-        c.gridy = 2;
-        c.fill = GridBagConstraints.NONE;
-        c.insets = BrowserFrame.DEFAULT_INSETS;
-        this.add(oidSearchButton, c);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 3;
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.insets = BrowserFrame.DEFAULT_INSETS;
+        this.add(oidSearchButton, gbc);
         
         // Add MIB tree
         mibTree = MibTreeBuilder.getInstance().getTree();
@@ -113,15 +119,15 @@ public class TreePanel extends JPanel
         JScrollPane treePane = new JScrollPane(mibTree);
         treePane.setPreferredSize(new Dimension(430, 633));
 
-        c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 3;
-        c.gridwidth = 3;
-        c.weightx = 1.0d;
-        c.weighty = 1.0d;
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = BrowserFrame.DEFAULT_INSETS;
-        this.add(treePane, c);        
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.gridwidth = 3;
+        gbc.weightx = 1.0d;
+        gbc.weighty = 1.0d;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = BrowserFrame.DEFAULT_INSETS;
+        this.add(treePane, gbc);        
         
         // Associate labels
         nameSearchLabel.setLabelFor(nameSearchField);
@@ -177,5 +183,10 @@ public class TreePanel extends JPanel
 
         // TODO
 //        return treePanel;
+        
+        // Mediatorにコンポーネントを設定する
+        this.mediator.setNameSearchField(nameSearchField);
+        this.mediator.setOidSearchField(oidSearchField);
+        this.mediator.setMibTree(mibTree);
     }
 }
