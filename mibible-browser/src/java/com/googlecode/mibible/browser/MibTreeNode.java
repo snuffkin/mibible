@@ -37,7 +37,7 @@ import net.percederberg.mibble.value.ObjectIdentifierValue;
  * @version  2.5
  * @since    2.3
  */
-public class MibNode extends DefaultMutableTreeNode {
+public class MibTreeNode extends DefaultMutableTreeNode {
 
     /**
      * The MIB node name.
@@ -55,7 +55,7 @@ public class MibNode extends DefaultMutableTreeNode {
      * @param name           the node name
      * @param value          the node object identifier value
      */
-    public MibNode(String name, ObjectIdentifierValue value) {
+    public MibTreeNode(String name, ObjectIdentifierValue value) {
         super(name);
         this.name = name;
         this.value = value;
