@@ -13,6 +13,7 @@ import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.List;
 import java.util.TooManyListenersException;
 
@@ -24,6 +25,7 @@ import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreeSelectionModel;
 
 import com.googlecode.mibible.browserold.MibTreeBuilder;
 
@@ -55,7 +57,10 @@ public class TreePanel extends JPanel
     }
     public void initialize()
     {
+        // レイアウトを設定する
         this.setLayout(new GridBagLayout());
+
+        // レイアウト設定用クラス
         GridBagConstraints gbc;
 
         // Add Name Search label
@@ -109,7 +114,13 @@ public class TreePanel extends JPanel
         this.add(oidSearchButton, gbc);
         
         // Add MIB tree
-        mibTree = MibTreeBuilder.getInstance().getTree();
+        JTree mibTree = new JTree();
+        // TODO
+//        mibTree.setToolTipText("");
+//        mibTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+//        mibTree.setRootVisible(false);
+//        mibTree.setCellRenderer(new MibTreeCellRenderer());
+
         mibTree.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
             	// TODO
@@ -149,10 +160,9 @@ public class TreePanel extends JPanel
                         if (transfer.isDataFlavorSupported(DataFlavor.javaFileListFlavor))
                         {
                             e.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
-                            List fileList
-                            = (List)(transfer.getTransferData(DataFlavor.javaFileListFlavor));
-                            // TODO
-//                            loadMib(fileList);
+                            List<File> files
+                            = (List<File>)(transfer.getTransferData(DataFlavor.javaFileListFlavor));
+                            openMib(files);
                         }
                     } catch (Exception ex) {
                         ex.printStackTrace();
@@ -189,4 +199,10 @@ public class TreePanel extends JPanel
         this.mediator.setOidSearchField(oidSearchField);
         this.mediator.setMibTree(mibTree);
     }
+    
+    private void openMib(List<File> files)
+    {
+    	this.mediator.openMib(files);
+    }
+    
 }
