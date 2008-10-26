@@ -25,31 +25,11 @@ import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreeSelectionModel;
-
-import com.googlecode.mibible.browserold.MibTreeBuilder;
 
 public class TreePanel extends JPanel
 {
 	/** Mediator */
 	private Mediator mediator;
-	
-    /** Name Search label */
-    private JLabel nameSearchLabel = new JLabel("Name:"); 
-    /** Name Search field */
-    private JTextField nameSearchField = new JTextField(30);
-    /** Name Search button */
-    private JButton nameSearchButton = new JButton("Search");
-
-    /** OID Search label */
-    private JLabel oidSearchLabel = new JLabel("OID:"); 
-    /** OID Search field */
-    private JTextField oidSearchField = new JTextField(30);
-    /** OID Search button */
-    private JButton oidSearchButton = new JButton("Search");
-	
-    /** MIB tree */
-    private JTree mibTree = null;
 	
     public TreePanel(Mediator mediator)
     {
@@ -64,6 +44,7 @@ public class TreePanel extends JPanel
         GridBagConstraints gbc;
 
         // Add Name Search label
+        JLabel nameSearchLabel = new JLabel("Name:");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 1;
@@ -72,6 +53,7 @@ public class TreePanel extends JPanel
         this.add(nameSearchLabel, gbc);
         
         // Add Name Search field
+        JTextField nameSearchField = new JTextField(30);
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.weightx = 1.0d;
@@ -81,6 +63,7 @@ public class TreePanel extends JPanel
         this.add(nameSearchField, gbc);
         
         // Add Name Search button
+        JButton nameSearchButton = new JButton("Search");
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 1;
@@ -89,6 +72,7 @@ public class TreePanel extends JPanel
         this.add(nameSearchButton, gbc);
 
         // Add OID Search label
+        JLabel oidSearchLabel = new JLabel("OID:");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 2;
@@ -97,6 +81,7 @@ public class TreePanel extends JPanel
         this.add(oidSearchLabel, gbc);
         
         // Add OID Search field
+        JTextField oidSearchField = new JTextField(30);
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 2;
@@ -106,6 +91,7 @@ public class TreePanel extends JPanel
         this.add(oidSearchField, gbc);
         
         // Add OID Search button
+        JButton oidSearchButton = new JButton("Search");
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 2;
@@ -179,7 +165,7 @@ public class TreePanel extends JPanel
         nameSearchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	// TODO
-//                searchName();
+//                searchNodeByName();
             }
         });
         
@@ -187,13 +173,10 @@ public class TreePanel extends JPanel
         oidSearchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	// TODO
-//                searchOID();
+//                searchNodeByOid();
             }
         });
 
-        // TODO
-//        return treePanel;
-        
         // Mediatorにコンポーネントを設定する
         this.mediator.setNameSearchField(nameSearchField);
         this.mediator.setOidSearchField(oidSearchField);
