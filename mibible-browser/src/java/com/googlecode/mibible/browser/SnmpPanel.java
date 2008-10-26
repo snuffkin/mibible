@@ -4,4 +4,8 @@ import javax.swing.JPanel;
 
 public class SnmpPanel extends JPanel {
 
+    public void initialize()
+    {
+    	
+    }
 }
