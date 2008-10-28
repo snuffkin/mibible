@@ -1,148 +1,25 @@
-/*
- * MibTreeBuilder.java
- *
- * This work is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published
- * by the Free Software Foundation; either version 2 of the License,
- * or (at your option) any later version.
- *
- * This work is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA
- *
- * Copyright (c) 2004 Per Cederberg. All rights reserved.
- */
-
 package com.googlecode.mibible.browser;
 
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import javax.swing.JTree;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
 
 import net.percederberg.mibble.Mib;
-import net.percederberg.mibble.MibLoader;
-import net.percederberg.mibble.MibLoaderException;
 import net.percederberg.mibble.MibSymbol;
 import net.percederberg.mibble.MibValue;
 import net.percederberg.mibble.MibValueSymbol;
 import net.percederberg.mibble.value.ObjectIdentifierValue;
 
-/**
- * Handles loading MIB files and creating a JTree representation of
- * the parsed MIB. A singleton class.
- *
- * @author   Watsh Rajneesh
- * @author   Per Cederberg, <per at percederberg dot net>
- * @version  2.5
- * @since    2.3
- */
-public class MibTreeBuilder {
-
-    /**
-     * The single class instance.
-     */
-    private static MibTreeBuilder instance = null;
-
-    /**
-     * The root tree component. This acts as a placeholder for
-     * attaching multiple MIB sub-trees.
-     */
-    private JTree mibTree = null;
-
-    /**
-     * The MIB node map. This is indexed by the MIB symbol.
-     */
-    private HashMap nodes = new HashMap();
-
-    /**
-     * Returns the single instance of this class.
-     *
-     * @return the one and only instance
-     */
-    public static MibTreeBuilder getInstance() {
-        if (instance == null) {
-            instance = new MibTreeBuilder();
-        }
-        return instance;
-    }
-
-    /**
-     * Creates a new MIB tree builder.
-     */
-    private MibTreeBuilder() {
-        int  mode = TreeSelectionModel.SINGLE_TREE_SELECTION;
-
-        mibTree = new MibTree();
-        mibTree.setToolTipText("");
-        mibTree.getSelectionModel().setSelectionMode(mode);
-        mibTree.setRootVisible(false);
-        mibTree.setCellRenderer(new MibTreeCellRenderer());
-    }
-
-    /**
-     * Returns the MIB tree component.
-     *
-     * @return the MIB tree component
-     */
-    public JTree getTree() {
-        return mibTree;
-    }
-
-    /**
-     * Returns the MIB node corresponding to the specified symbol.
-     *
-     * @param symbol         the symbol to search for
-     *
-     * @return the MIB node, or
-     *         null if none found
-     */
-    public MibTreeNode getNode(MibSymbol symbol) {
-        return (MibTreeNode) nodes.get(symbol);
-    }
-
-    /**
-     * Loads a MIB file.
-     *
-     * @param file           the file to load
-     *
-     * @return the MIB file loaded
-     *
-     * @throws IOException if the MIB file couldn't be found in the
-     *             MIB search path
-     * @throws MibLoaderException if the MIB file couldn't be loaded
-     *             correctly
-     */
-    public Mib loadMib(File file)
-        throws IOException, MibLoaderException {
-
-        MibLoader  loader = new MibLoader();
-
-        loader.addDir(file.getParentFile());
-        return loader.load(file);
-    }
-
+public class MibTreeBuilder
+{
     /**
      * Adds a MIB to the MIB tree.
      *
      * @param mib            the MIB to add
      */
-    public void addMib(Mib mib) {
+    public MibTreeNode mib2node(Mib mib)
+    {
         Iterator   iter = mib.getAllSymbols().iterator();
         MibSymbol  symbol;
         MibTreeNode    root;
@@ -151,19 +28,19 @@ public class MibTreeBuilder {
 
         // Create value sub tree
         node = new MibTreeNode("VALUES", null);
-        valueTree = new JTree(node);
         while (iter.hasNext()) {
+        	// valueTreeにMibSymbolを追加する
             symbol = (MibSymbol) iter.next();
-            addSymbol(valueTree.getModel(), symbol);
+            addSymbol(node, symbol);
         }
 
         // TODO: create TYPES sub tree
 
         // Add sub tree root to MIB tree
-        root = (MibTreeNode) mibTree.getModel().getRoot();
-        node = new MibTreeNode(mib.getName(), null);
-        node.add((MibTreeNode) valueTree.getModel().getRoot());
-        root.add(node);
+	    root = new MibTreeNode(mib.getName(), null);
+	    root.add(node);
+        
+        return root;
     }
 
     /**
@@ -174,7 +51,7 @@ public class MibTreeBuilder {
      *
      * @see #addToTree
      */
-    private void addSymbol(TreeModel model, MibSymbol symbol) {
+    private void addSymbol(MibTreeNode root, MibSymbol symbol) {
         MibValue               value;
         ObjectIdentifierValue  oid;
 
@@ -182,7 +59,8 @@ public class MibTreeBuilder {
             value = ((MibValueSymbol) symbol).getValue();
             if (value instanceof ObjectIdentifierValue) {
                 oid = (ObjectIdentifierValue) value;
-                addToTree(model, oid);
+                // OIDをTreeについか
+                addToTree(root, oid);
             }
         }
     }
@@ -195,21 +73,23 @@ public class MibTreeBuilder {
      *
      * @return the MIB tree node added
      */
-    private MibTreeNode addToTree(TreeModel model, ObjectIdentifierValue oid) {
+    private MibTreeNode addToTree(MibTreeNode root, ObjectIdentifierValue oid) {
     	MibTreeNode  parent;
     	MibTreeNode  node;
         String   name;
 
         // Add parent node to tree (if needed)
         if (hasParent(oid)) {
-            parent = addToTree(model, oid.getParent());
+            parent = addToTree(root, oid.getParent());
         } else {
-            parent = (MibTreeNode) model.getRoot();
+            parent = root;
         }
 
         // Check if node already added
-        for (int i = 0; i < model.getChildCount(parent); i++) {
-            node = (MibTreeNode) model.getChild(parent, i);
+        Enumeration<MibTreeNode> enumeration = parent.children();
+        while (enumeration.hasMoreElements())
+        {
+            node = enumeration.nextElement();
             if (node.getValue().equals(oid)) {
                 return node;
             }
@@ -219,7 +99,6 @@ public class MibTreeBuilder {
         name = oid.getName() + " (" + oid.getValue() + ")";
         node = new MibTreeNode(name, oid);
         parent.add(node);
-        nodes.put(oid.getSymbol(), node);
         return node;
     }
 
@@ -240,85 +119,5 @@ public class MibTreeBuilder {
             && parent.getSymbol() != null
             && parent.getSymbol().getMib() != null
             && parent.getSymbol().getMib().equals(oid.getSymbol().getMib());
-    }
-
-    /**
-     * Unloads a MIB.
-     *
-     * @param mibName        the name of the MIB to unload
-     *
-     * @return true on success, or
-     *         false otherwise
-     */
-    public boolean unloadMib(String mibName) {
-        DefaultTreeModel model = (DefaultTreeModel) mibTree.getModel();
-        MibTreeNode tempNode = null;
-        MibTreeNode root = (MibTreeNode) model.getRoot();
-        Enumeration e = root.preorderEnumeration();
-
-        while (e.hasMoreElements()) {
-            tempNode = (MibTreeNode) e.nextElement();
-            if (tempNode.getValue() == null &&
-                tempNode.getName().equals(mibName)) {
-
-                removeNodes(tempNode);
-                model.removeNodeFromParent(tempNode);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Removes descendant nodes from the node hash.
-     *
-     * @param root           the root node
-     */
-    private void removeNodes(MibTreeNode root) {
-        Iterator   iter = nodes.entrySet().iterator();
-        Map.Entry  entry;
-        MibTreeNode    node;
-
-        while (iter.hasNext()) {
-            entry = (Map.Entry) iter.next();
-            node = (MibTreeNode) entry.getValue();
-            if (node.isNodeDescendant(root)) {
-                iter.remove();
-            }
-        }
-    }
-
-
-    /**
-     * A MIB tree component.
-     */
-    private class MibTree extends JTree {
-
-        /**
-         * Creates a new MIB tree.
-         */
-        public MibTree() {
-            super(new MibTreeNode("mibible browser", null));
-        }
-
-        /**
-         * Returns the tool tip text for a specified mouse event.
-         *
-         * @param e              the mouse event
-         *
-         * @return the tool tipe text, or
-         *         null for none
-         */
-        public String getToolTipText(MouseEvent e) {
-            TreePath  path;
-            MibTreeNode   node;
-
-            if (getRowForLocation(e.getX(), e.getY()) == -1) {
-                return null;    
-            }
-            path = getPathForLocation(e.getX(), e.getY());
-            node = (MibTreeNode) path.getLastPathComponent();
-            return node.getToolTipText();
-        }
     }
 }
