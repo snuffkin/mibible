@@ -25,6 +25,9 @@ import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeSelectionModel;
 
 public class TreePanel extends JPanel
 {
@@ -100,12 +103,14 @@ public class TreePanel extends JPanel
         this.add(oidSearchButton, gbc);
         
         // Add MIB tree
-        JTree mibTree = new JTree();
+//        JTree mibTree = new JTree(new Object[0]);
+        JTree mibTree = new JTree(new DefaultTreeModel(new DefaultMutableTreeNode()));
+//        JTree mibTree = new JTree();
         // TODO
-//        mibTree.setToolTipText("");
-//        mibTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-//        mibTree.setRootVisible(false);
-//        mibTree.setCellRenderer(new MibTreeCellRenderer());
+        mibTree.setToolTipText("");
+        mibTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        mibTree.setRootVisible(false);
+        mibTree.setCellRenderer(new MibTreeCellRenderer());
 
         mibTree.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
@@ -187,5 +192,4 @@ public class TreePanel extends JPanel
     {
     	this.mediator.openMib(files);
     }
-    
 }
