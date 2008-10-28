@@ -2,13 +2,16 @@ package com.googlecode.mibible.browser;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 
 import net.percederberg.mibble.Mib;
 import net.percederberg.mibble.MibLoader;
@@ -16,6 +19,11 @@ import net.percederberg.mibble.MibLoaderException;
 
 public class Mediator
 {
+	private Map<String, MibTreeNode> oidToMibTreeNode
+	    = new HashMap<String, MibTreeNode>();
+	private Map<String, MibTreeNode> nameToMibTreeNode
+    = new HashMap<String, MibTreeNode>();
+	
     /** ステータスラベル */
     private JLabel statusLabel;
     /** Name Search field */
@@ -68,7 +76,8 @@ public class Mediator
         Mib mib;
         try {
 			mib = loader.load(file);
-			MibTreeNodeBuilder builder = new MibTreeNodeBuilder();
+			MibTreeNodeBuilder builder
+			    = new MibTreeNodeBuilder(oidToMibTreeNode, nameToMibTreeNode);
 			MibTreeNode mibroot = builder.mib2node(mib);
 			MibTreeNode root = new MibTreeNode("mibible browser", null);
 			root.add(mibroot);
@@ -93,4 +102,44 @@ public class Mediator
 			openMib(file);
 		}
 	}
+	public void searchNodeByOid()
+	{
+		String condition = this.oidSearchField.getText();
+		MibTreeNode node = this.oidToMibTreeNode.get(condition);
+		expandTree(node);
+	}
+	public void searchNodeByName()
+	{
+		String condition = this.nameSearchField.getText();
+		MibTreeNode node = this.nameToMibTreeNode.get(condition);
+		expandTree(node);
+	}
+	private void expandTree(MibTreeNode node)
+	{
+        if (node == null)
+        {
+            this.mibTree.clearSelection();
+            return;
+        }
+
+        TreePath path = new TreePath(node.getPath());
+        this.mibTree.expandPath(path);
+        this.mibTree.scrollPathToVisible(path);
+        this.mibTree.setSelectionPath(path);
+        this.mibTree.repaint();
+	}
+	
+	public void updateTreeSelection()
+	{
+		MibTreeNode node = (MibTreeNode) this.mibTree.getLastSelectedPathComponent();
+        if (node == null)
+        {
+            this.descriptionArea.setText("");
+        } else {
+        	this.descriptionArea.setText(node.getDescription());
+        	this.descriptionArea.setCaretPosition(0);
+        }
+//        communicationPanel.updateOid();
+	}
+	
 }
