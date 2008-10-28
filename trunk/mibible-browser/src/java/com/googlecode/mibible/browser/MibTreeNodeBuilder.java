@@ -1,7 +1,9 @@
 package com.googlecode.mibible.browser;
 
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.swing.JTree;
 
@@ -13,6 +15,19 @@ import net.percederberg.mibble.value.ObjectIdentifierValue;
 
 public class MibTreeNodeBuilder
 {
+	private Map<String, MibTreeNode> oidToMibTreeNode
+        = new HashMap<String, MibTreeNode>();
+	private Map<String, MibTreeNode> nameToMibTreeNode
+	    = new HashMap<String, MibTreeNode>();
+
+	public MibTreeNodeBuilder(
+			Map<String, MibTreeNode> oidToMibTreeNode,
+			Map<String, MibTreeNode> nameToMibTreeNode)
+	{
+		this.oidToMibTreeNode = oidToMibTreeNode;
+		this.nameToMibTreeNode = nameToMibTreeNode;
+	}
+	
     /**
      * Adds a MIB to the MIB tree.
      *
@@ -24,7 +39,6 @@ public class MibTreeNodeBuilder
         MibSymbol  symbol;
         MibTreeNode    root;
         MibTreeNode    node;
-        JTree      valueTree;
 
         // Create value sub tree
         node = new MibTreeNode("VALUES", null);
@@ -96,9 +110,14 @@ public class MibTreeNodeBuilder
         }
 
         // Create new node
-        name = oid.getName() + " (" + oid.getValue() + ")";
+//        name = oid.getName() + " (" + oid.getValue() + ")";
+        name = oid.getName();
         node = new MibTreeNode(name, oid);
         parent.add(node);
+        
+        this.oidToMibTreeNode.put(oid.toString(), node);
+        this.nameToMibTreeNode.put(name, node);
+        
         return node;
     }
 

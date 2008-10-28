@@ -114,8 +114,7 @@ public class TreePanel extends JPanel
 
         mibTree.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
-            	// TODO
-//                updateTreeSelection();
+            	TreePanel.this.mediator.updateTreeSelection();
             }
         });
         JScrollPane treePane = new JScrollPane(mibTree);
@@ -169,16 +168,14 @@ public class TreePanel extends JPanel
         nameSearchButton.setToolTipText("Search Name and Expand Tree");
         nameSearchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	// TODO
-//                searchNodeByName();
+            	TreePanel.this.mediator.searchNodeByName();
             }
         });
         
         oidSearchButton.setToolTipText("Search OID and Expand Tree");
         oidSearchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	// TODO
-//                searchNodeByOid();
+            	TreePanel.this.mediator.searchNodeByOid();
             }
         });
 
