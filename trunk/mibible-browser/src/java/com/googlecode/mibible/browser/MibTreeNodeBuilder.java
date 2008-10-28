@@ -11,7 +11,7 @@ import net.percederberg.mibble.MibValue;
 import net.percederberg.mibble.MibValueSymbol;
 import net.percederberg.mibble.value.ObjectIdentifierValue;
 
-public class MibTreeBuilder
+public class MibTreeNodeBuilder
 {
     /**
      * Adds a MIB to the MIB tree.

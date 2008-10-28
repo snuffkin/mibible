@@ -68,7 +68,7 @@ public class Mediator
         Mib mib;
         try {
 			mib = loader.load(file);
-			MibTreeBuilder builder = new MibTreeBuilder();
+			MibTreeNodeBuilder builder = new MibTreeNodeBuilder();
 			MibTreeNode mibroot = builder.mib2node(mib);
 			MibTreeNode root = new MibTreeNode("mibible browser", null);
 			root.add(mibroot);
