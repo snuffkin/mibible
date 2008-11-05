@@ -137,13 +137,16 @@ public class TreePanel extends JPanel
         // Add DnD action listeners
         DropTarget dropTarget = new DropTarget();
         dropTarget.setComponent(mibTree);
-        try {
-            dropTarget.addDropTargetListener(new DropTargetListener() {
+        try
+        {
+            dropTarget.addDropTargetListener(new DropTargetListener()
+            {
                 public void dragEnter(DropTargetDragEvent e){} 
                 public void dragExit(DropTargetEvent e){} 
                 public void dragOver(DropTargetDragEvent e){}
                 public void dropActionChanged(DropTargetDragEvent e){} 
-                public void drop(DropTargetDropEvent e) {
+                public void drop(DropTargetDropEvent e)
+                {
                     try
                     {
                         Transferable transfer = e.getTransferable();
@@ -154,27 +157,35 @@ public class TreePanel extends JPanel
                             = (List<File>)(transfer.getTransferData(DataFlavor.javaFileListFlavor));
                             openMib(files);
                         }
-                    } catch (Exception ex) {
+                    }
+                    catch (Exception ex)
+                    {
                         ex.printStackTrace();
                     }
                 }
             });
-        } catch (TooManyListenersException e1) {
+        }
+        catch (TooManyListenersException e1)
+        {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
         
         // Add button action listeners
         nameSearchButton.setToolTipText("Search Name and Expand Tree");
-        nameSearchButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        nameSearchButton.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
             	TreePanel.this.mediator.searchNodeByName();
             }
         });
         
         oidSearchButton.setToolTipText("Search OID and Expand Tree");
-        oidSearchButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        oidSearchButton.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
             	TreePanel.this.mediator.searchNodeByOid();
             }
         });

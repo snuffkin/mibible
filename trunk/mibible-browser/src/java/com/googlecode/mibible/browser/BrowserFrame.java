@@ -8,7 +8,9 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -25,6 +27,9 @@ public class BrowserFrame extends JFrame
 	/** Mediator */
 	private Mediator mediator = new Mediator();
 
+	/**
+	 * Frameの初期表示を行う。
+	 */
     public void initialize()
     {
     	// Frameの初期表示領域の設定
@@ -72,7 +77,7 @@ public class BrowserFrame extends JFrame
         
         // 右側のPane内部をを上下に分けるPaneの中身を設定する
         topBottomSplitPane.setLeftComponent(getDescriptionPanel(mediator));
-        topBottomSplitPane.setRightComponent(getSnmpPanel(mediator));
+        topBottomSplitPane.setRightComponent(getCommunicationPanel(mediator));
         
         // Frame内部を左右に分けるPaneの中身を設定する
         leftRightSplitPane.setLeftComponent(getTreePanel(mediator));
@@ -89,7 +94,11 @@ public class BrowserFrame extends JFrame
         // Mediatorにコンポーネントを設定する
         this.mediator.setStatusLabel(statusLabel);
     }
-    
+
+    /**
+     * メニューバーを作成する。
+     * @return メニューバー
+     */
     private JMenuBar getMenu()
     {
     	JMenuBar menuBar = new JMenuBar();
@@ -102,6 +111,10 @@ public class BrowserFrame extends JFrame
     	return menuBar;
     }
     
+    /**
+     * メニューの「File」部分を作成する。
+     * @return Fileメニュー
+     */
     private JMenu getFileMenu()
     {
         // Create File menu
@@ -109,18 +122,34 @@ public class BrowserFrame extends JFrame
         
     	// Create Open MIB item
     	JMenuItem open = new JMenuItem("Open MIB...");
-    	open.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-            	// TODO
-//                loadMib();
+    	open.addActionListener(new ActionListener()
+    	{
+            public void actionPerformed(ActionEvent e)
+            {
+                JFileChooser  dialog = new JFileChooser(new File("."));
+                File[]        files;
+                int           result;
+
+//                dialog.setCurrentDirectory(currentDir);
+                dialog.setMultiSelectionEnabled(true);
+                result = dialog.showOpenDialog(BrowserFrame.this);
+                if (result == JFileChooser.APPROVE_OPTION)
+                {
+                    files = dialog.getSelectedFiles();
+                    BrowserFrame.this.mediator.openMib(files);
+                    // TODO
+//                    BrowserFrdescriptionArea.setText("");
+                }
             }
         });
         menu.add(open);
         
     	// Create Close MIB item
         JMenuItem close = new JMenuItem("Close MIB");
-        close.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        close.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
             	// TODO
 //                unloadMib();
             }
@@ -132,8 +161,10 @@ public class BrowserFrame extends JFrame
         
     	// Create Exit item
         JMenuItem exit = new JMenuItem("Exit");
-        exit.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        exit.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
                 System.exit(0);
             }
         });
@@ -142,6 +173,10 @@ public class BrowserFrame extends JFrame
     	return menu;
     }
     
+    /**
+     * メニューの「Help」部分を作成する。
+     * @return Helpメニュー
+     */
     private JMenu getHelpMenu()
     {
         // Create Help menu
@@ -149,8 +184,10 @@ public class BrowserFrame extends JFrame
         
     	// Create Open MIB item
     	JMenuItem about = new JMenuItem("About mibible");
-    	about.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+    	about.addActionListener(new ActionListener()
+    	{
+            public void actionPerformed(ActionEvent e)
+            {
             	// TODO
 //                loadMib();
             }
@@ -159,24 +196,40 @@ public class BrowserFrame extends JFrame
         
     	return menu;
     }
-    
+
+    /**
+     * Mediatorと関連付けを行ったTreePanelを作成する。
+     * @param mediator
+     * @return　作成したTreePanel
+     */
     private JPanel getTreePanel(Mediator mediator)
     {
     	TreePanel panel = new TreePanel(mediator);
     	panel.initialize();
     	return panel;
     }
+
+    /**
+     * Mediatorと関連付けを行ったDescriptionPanelを作成する。
+     * @param mediator
+     * @return　作成したDescriptionPanel
+     */
     private JPanel getDescriptionPanel(Mediator mediator)
     {
     	DescriptionPanel panel = new DescriptionPanel(mediator);
     	panel.initialize();
     	return panel;
     }
-    private JPanel getSnmpPanel(Mediator mediator)
+
+    /**
+     * Mediatorと関連付けを行ったCommunicationPanelを作成する。
+     * @param mediator
+     * @return　作成したCommunicationPanel
+     */
+    private JPanel getCommunicationPanel(Mediator mediator)
     {
     	CommunicationPanel panel = new CommunicationPanel(mediator);
     	panel.initialize();
     	return panel;
     }
-    
 }
