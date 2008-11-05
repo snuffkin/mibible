@@ -97,6 +97,11 @@ public class Mediator
 	}
 	public void openMib(List<File> files)
 	{
+        File[] list = (File[]) files.toArray(new File[files.size()]);
+		openMib(list);
+	}
+	public void openMib(File[] files)
+	{
 		for (File file : files)
 		{
 			openMib(file);
