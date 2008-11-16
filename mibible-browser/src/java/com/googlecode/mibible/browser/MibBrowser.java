@@ -22,6 +22,7 @@ public class MibBrowser {
         {
             String laf = UIManager.getSystemLookAndFeelClassName();
             UIManager.setLookAndFeel(laf);
+            MibInfoDao.getInstance();
         }
         catch (Exception ex)
         {
