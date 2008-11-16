@@ -34,7 +34,7 @@ public class LongTextualOidFilter extends PrintFilter
         // 末端からから上位の順に、textual formを作成する
         while (tmpOid != null)
         {
-            if (ret.isEmpty())
+            if (ret.equals(""))
             {
                 ret = tmpOid.getName();
             }
