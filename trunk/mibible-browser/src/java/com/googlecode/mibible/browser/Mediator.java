@@ -22,9 +22,10 @@ public class Mediator
 	private Map<String, MibTreeNode> oidToMibTreeNode
 	    = new HashMap<String, MibTreeNode>();
 	private Map<String, MibTreeNode> nameToMibTreeNode
-    = new HashMap<String, MibTreeNode>();
-	
-    /** ステータスラベル */
+        = new HashMap<String, MibTreeNode>();
+	private NoticeNodeHolder holder = new NoticeNodeHolder();
+
+	/** Status Label */
     private JLabel statusLabel;
     /** Name Search field */
     private JTextField nameSearchField;
@@ -34,6 +35,14 @@ public class Mediator
     private JTree mibTree;
 	/** Description Area */
 	private JTextArea descriptionArea;
+	
+	/**
+	 * 
+	 * @return
+	 */
+    public NoticeNodeHolder getHolder() {
+		return holder;
+	}
 	/**
 	 * @param statusLabel the statusLabel to set
 	 */
@@ -111,15 +120,34 @@ public class Mediator
 	{
 		String condition = this.oidSearchField.getText();
 		MibTreeNode node = this.oidToMibTreeNode.get(condition);
-		expandTree(node);
+		this.holder.clear();
+		this.holder.addNode(node);
+		expandTree(node, true);
 	}
 	public void searchNodeByName()
 	{
+		this.holder.clear();
 		String condition = this.nameSearchField.getText();
-		MibTreeNode node = this.nameToMibTreeNode.get(condition);
-		expandTree(node);
+		List<MibInfo> list = MibInfoDao.getInstance().selectByName(condition);
+		boolean isFirst = true;
+		
+		for (MibInfo info : list)
+		{
+			String name = info.getName();
+			MibTreeNode node = this.nameToMibTreeNode.get(name);
+			this.holder.addNode(node);
+			if (isFirst)
+			{
+				expandTree(node, true);
+				isFirst = false;
+			}
+			else
+			{
+				expandTree(node, false);
+			}
+		}
 	}
-	private void expandTree(MibTreeNode node)
+	private void expandTree(MibTreeNode node, boolean isSelection)
 	{
         if (node == null)
         {
@@ -129,8 +157,11 @@ public class Mediator
 
         TreePath path = new TreePath(node.getPath());
         this.mibTree.expandPath(path);
-        this.mibTree.scrollPathToVisible(path);
-        this.mibTree.setSelectionPath(path);
+        if (isSelection)
+        {
+            this.mibTree.scrollPathToVisible(path);
+            this.mibTree.setSelectionPath(path);
+        }
         this.mibTree.repaint();
 	}
 	
@@ -140,10 +171,13 @@ public class Mediator
         if (node == null)
         {
             this.descriptionArea.setText("");
-        } else {
+        }
+        else
+        {
         	this.descriptionArea.setText(node.getDescription());
         	this.descriptionArea.setCaretPosition(0);
         }
+        // TODO
 //        communicationPanel.updateOid();
 	}
 	

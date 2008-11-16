@@ -31,6 +31,9 @@ public class MibTreeCellRenderer extends DefaultTreeCellRenderer
     // TODO is this trash code?
     private JTree tree;
     
+    /** NoticeNodeHolder */
+    private NoticeNodeHolder holder;
+    
     // TODO what is isDropCell?
 //    private boolean isDropCell;
     
@@ -110,6 +113,11 @@ public class MibTreeCellRenderer extends DefaultTreeCellRenderer
             mibIcon_ObjectType_SequenceType = new ImageIcon(url);
         }
     }
+    
+    public MibTreeCellRenderer(NoticeNodeHolder holder)
+    {
+    	this.holder = holder;
+    }
 
     /**
      * Configures the renderer based on the passed in components.
@@ -135,10 +143,20 @@ public class MibTreeCellRenderer extends DefaultTreeCellRenderer
             {
                 tempValue = value;
             }
+            
+            if (this.holder.isNotice((MibTreeNode) value))
+            {
+            	setBackgroundNonSelectionColor(Color.YELLOW);
+            }
+            else
+            {
+            	setBackgroundNonSelectionColor(Color.WHITE);
+            }
         }
         else
         {
             tempValue = value;
+        	setBackgroundNonSelectionColor(Color.WHITE);
         }
         
         // Nodeのオブジェクトを表示文字列に変換する

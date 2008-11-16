@@ -1,8 +1,10 @@
 package com.googlecode.mibible.browser;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JTree;
@@ -39,14 +41,20 @@ public class MibTreeNodeBuilder
         MibSymbol  symbol;
         MibTreeNode    root;
         MibTreeNode    node;
+        List<MibInfo>  list = new ArrayList<MibInfo>();
 
         // Create value sub tree
         node = new MibTreeNode("VALUES", null);
         while (iter.hasNext()) {
         	// valueTreeにMibSymbolを追加する
             symbol = (MibSymbol) iter.next();
-            addSymbol(node, symbol);
+            addSymbol(node, symbol, list);
         }
+        
+        // MIB情報を内部のテーブルに保存する
+        MibInfoDao dao = MibInfoDao.getInstance();
+        dao.deleteAll();
+        dao.insert(list);
 
         // TODO: create TYPES sub tree
 
@@ -65,7 +73,7 @@ public class MibTreeNodeBuilder
      *
      * @see #addToTree
      */
-    private void addSymbol(MibTreeNode root, MibSymbol symbol) {
+    private void addSymbol(MibTreeNode root, MibSymbol symbol, List<MibInfo> list) {
         MibValue               value;
         ObjectIdentifierValue  oid;
 
@@ -73,8 +81,8 @@ public class MibTreeNodeBuilder
             value = ((MibValueSymbol) symbol).getValue();
             if (value instanceof ObjectIdentifierValue) {
                 oid = (ObjectIdentifierValue) value;
-                // OIDをTreeについか
-                addToTree(root, oid);
+                // OIDをTreeに追加
+                addToTree(root, oid, list);
             }
         }
     }
@@ -87,14 +95,14 @@ public class MibTreeNodeBuilder
      *
      * @return the MIB tree node added
      */
-    private MibTreeNode addToTree(MibTreeNode root, ObjectIdentifierValue oid) {
+    private MibTreeNode addToTree(MibTreeNode root, ObjectIdentifierValue oid, List<MibInfo> list) {
     	MibTreeNode  parent;
     	MibTreeNode  node;
         String   name;
 
         // Add parent node to tree (if needed)
         if (hasParent(oid)) {
-            parent = addToTree(root, oid.getParent());
+            parent = addToTree(root, oid.getParent(), list);
         } else {
             parent = root;
         }
@@ -117,6 +125,7 @@ public class MibTreeNodeBuilder
         
         this.oidToMibTreeNode.put(oid.toString(), node);
         this.nameToMibTreeNode.put(name, node);
+        list.add(new MibInfo(oid.toString(), name));
         
         return node;
     }

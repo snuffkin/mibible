@@ -110,7 +110,7 @@ public class TreePanel extends JPanel
         mibTree.setToolTipText("");
         mibTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         mibTree.setRootVisible(false);
-        mibTree.setCellRenderer(new MibTreeCellRenderer());
+        mibTree.setCellRenderer(new MibTreeCellRenderer(this.mediator.getHolder()));
 
         mibTree.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
