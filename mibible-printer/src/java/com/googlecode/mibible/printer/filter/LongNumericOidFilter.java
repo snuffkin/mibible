@@ -34,7 +34,7 @@ public class LongNumericOidFilter extends PrintFilter
         // 末端からから上位の順に、numeric formを作成する
         while (tmpOid != null)
         {
-            if (ret.isEmpty())
+            if (ret.equals(""))
             {
                 ret = String.valueOf(tmpOid.getValue());
             }
