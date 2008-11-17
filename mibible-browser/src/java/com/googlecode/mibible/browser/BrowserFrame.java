@@ -173,8 +173,7 @@ public class BrowserFrame extends JFrame
         {
             public void actionPerformed(ActionEvent e)
             {
-            	// TODO
-//                unloadMib();
+                BrowserFrame.this.mediator.unloadMib();
             }
         });
         menu.add(close);

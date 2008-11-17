@@ -71,7 +71,7 @@ public class Mediator
 	 */
 	public void setStatusLabel(JLabel statusLabel) {
 		this.statusLabel = statusLabel;
-		this.statusLabel.setText("Ready");
+		this.statusLabel.setText("Ready.");
 	}
 	/**
 	 * @param nameSearchField the nameSearchField to set
@@ -139,6 +139,22 @@ public class Mediator
 			openMib(file);
 		}
 	}
+	public void unloadMib()
+	{
+		// TODO　複数MIB表示に対応する必要あり
+		// 内部のデータ構造をクリアする
+		this.oidToMibTreeNode.clear();
+		this.nameToMibTreeNode.clear();
+		this.holder.clear();
+		MibInfoDao.getInstance().deleteAll();
+		
+		// ツリー表示をクリアする
+		MibTreeNode root = new MibTreeNode("mibible browser", null);
+		DefaultTreeModel model = new DefaultTreeModel(root);
+		this.mibTree.setModel(model);
+		model.reload();
+	}
+	
 	public void searchNodeByOid()
 	{
 		this.holder.clear();
@@ -148,6 +164,7 @@ public class Mediator
 		{
 			this.oidSearchField.grabFocus();
 			this.oidSearchField.setCaretPosition(0);
+			this.statusLabel.setText("No item hits.");
 		}
 		
 		boolean isFirst = true;
@@ -159,6 +176,7 @@ public class Mediator
 			if (isFirst)
 			{
 				expandTree(node, true);
+				this.statusLabel.setText(node.getName() + " " + node.getOid());
 				isFirst = false;
 			}
 			else
@@ -177,6 +195,7 @@ public class Mediator
 		{
 			this.nameSearchField.grabFocus();
 			this.nameSearchField.setCaretPosition(0);
+			this.statusLabel.setText("No item hits.");
 		}
 		
 		boolean isFirst = true;
@@ -188,6 +207,7 @@ public class Mediator
 			if (isFirst)
 			{
 				expandTree(node, true);
+				this.statusLabel.setText(node.getName() + " " + node.getOid());
 				isFirst = false;
 			}
 			else
@@ -223,11 +243,13 @@ public class Mediator
         if (node == null)
         {
             this.descriptionArea.setText("");
+            this.statusLabel.setText("");
         }
         else
         {
         	this.descriptionArea.setText(node.getDescription());
         	this.descriptionArea.setCaretPosition(0);
+            this.statusLabel.setText(node.getName() + " " + node.getOid());
         }
         // TODO
 //        communicationPanel.updateOid();
