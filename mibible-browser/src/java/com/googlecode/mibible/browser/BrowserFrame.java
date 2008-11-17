@@ -8,7 +8,13 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -26,7 +32,7 @@ public class BrowserFrame extends JFrame
 
 	/** Mediator */
 	private Mediator mediator = new Mediator();
-
+	
 	/**
 	 * Frameの初期表示を行う。
 	 */
@@ -44,7 +50,18 @@ public class BrowserFrame extends JFrame
         // ウィンドウタイトルの設定
         setTitle("mibible browser");
         // ウィンドウのXボタンで閉じる
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        addWindowListener(new WindowListener(){
+			public void windowActivated(WindowEvent e) {}
+			public void windowClosed(WindowEvent e) {}
+			public void windowClosing(WindowEvent e) {
+				BrowserFrame.this.mediator.exit();
+			}
+			public void windowDeactivated(WindowEvent e) {}
+			public void windowDeiconified(WindowEvent e) {}
+			public void windowIconified(WindowEvent e) {}
+			public void windowOpened(WindowEvent e) {}
+        });
         // メニューを設定する
         setJMenuBar(getMenu());
         // Frameにレイアウトを設定する
@@ -126,11 +143,12 @@ public class BrowserFrame extends JFrame
     	{
             public void actionPerformed(ActionEvent e)
             {
-                JFileChooser  dialog = new JFileChooser(new File("."));
+            	Properties prop = BrowserFrame.this.mediator.getProperties();
+            	String openDirectory = prop.getProperty(Mediator.FILE_CHOOSER_DIRECTORY, ".");
+                JFileChooser  dialog = new JFileChooser(new File(openDirectory));
                 File[]        files;
                 int           result;
 
-//                dialog.setCurrentDirectory(currentDir);
                 dialog.setMultiSelectionEnabled(true);
                 result = dialog.showOpenDialog(BrowserFrame.this);
                 if (result == JFileChooser.APPROVE_OPTION)
@@ -139,6 +157,11 @@ public class BrowserFrame extends JFrame
                     BrowserFrame.this.mediator.openMib(files);
                     // TODO
 //                    BrowserFrdescriptionArea.setText("");
+                    if (files.length > 0)
+                    {
+                    	openDirectory = files[0].getParent();
+                    	prop.setProperty(Mediator.FILE_CHOOSER_DIRECTORY, openDirectory);
+                    }
                 }
             }
         });
@@ -159,13 +182,48 @@ public class BrowserFrame extends JFrame
         // Create Separator
         menu.addSeparator();
         
+        // Create History
+        Properties prop = BrowserFrame.this.mediator.getProperties();
+		String historyStr = prop.getProperty("mibbrowser.history", "0");
+		int history = Integer.valueOf(historyStr);
+		for (int index = 1; index <= history; index++)
+		{
+			String fileName = prop.getProperty("mibbrowser.history." + index, "");
+			if (fileName.equals(""))
+			{
+				continue;
+			}
+			final File file = new File(fileName);
+			String historyMenuStr;
+			try {
+				historyMenuStr = index + ": " + file.getName() + "[" + file.getCanonicalPath() + "]";
+				JMenuItem historyMenu = new JMenuItem(historyMenuStr);
+		        menu.add(historyMenu);
+		        historyMenu.addActionListener(new ActionListener()
+		        {
+		            public void actionPerformed(ActionEvent e)
+		            {
+		            	BrowserFrame.this.mediator.openMib(file);
+		            }
+		        });
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		if (history > 0)
+		{
+	        // Create Separator
+	        menu.addSeparator();
+		}
+        
     	// Create Exit item
         JMenuItem exit = new JMenuItem("Exit");
         exit.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
-                System.exit(0);
+            	BrowserFrame.this.mediator.exit();
             }
         });
         menu.add(exit);

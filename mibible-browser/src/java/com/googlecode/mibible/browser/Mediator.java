@@ -1,10 +1,14 @@
 package com.googlecode.mibible.browser;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
@@ -19,6 +23,12 @@ import net.percederberg.mibble.MibLoaderException;
 
 public class Mediator
 {
+	private static final String MIBIBLE_HOME = System.getenv("MIBIBLE_HOME");
+	
+	public static final String FILE_CHOOSER_DIRECTORY = "fileChooserDirectory";
+	private static final String PROP_FILE = MIBIBLE_HOME + "/conf/mibbrowser.properties";
+	private Properties prop;
+
 	private Map<String, MibTreeNode> oidToMibTreeNode
 	    = new HashMap<String, MibTreeNode>();
 	private Map<String, MibTreeNode> nameToMibTreeNode
@@ -36,8 +46,21 @@ public class Mediator
 	/** Description Area */
 	private JTextArea descriptionArea;
 	
+	public Mediator()
+	{
+        this.prop = new Properties();
+		try {
+			this.prop.load(new FileInputStream(PROP_FILE));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	/**
-	 * 
 	 * @return
 	 */
     public NoticeNodeHolder getHolder() {
@@ -118,23 +141,20 @@ public class Mediator
 	}
 	public void searchNodeByOid()
 	{
+		this.holder.clear();
 		String condition = this.oidSearchField.getText();
-		MibTreeNode node = this.oidToMibTreeNode.get(condition);
-		this.holder.clear();
-		this.holder.addNode(node);
-		expandTree(node, true);
-	}
-	public void searchNodeByName()
-	{
-		this.holder.clear();
-		String condition = this.nameSearchField.getText();
-		List<MibInfo> list = MibInfoDao.getInstance().selectByName(condition);
-		boolean isFirst = true;
+		List<MibInfo> list = MibInfoDao.getInstance().selectByOid(condition);
+		if (list.size() == 0)
+		{
+			this.oidSearchField.grabFocus();
+			this.oidSearchField.setCaretPosition(0);
+		}
 		
+		boolean isFirst = true;
 		for (MibInfo info : list)
 		{
-			String name = info.getName();
-			MibTreeNode node = this.nameToMibTreeNode.get(name);
+			String oid =info.getOid();
+			MibTreeNode node = this.oidToMibTreeNode.get(oid);
 			this.holder.addNode(node);
 			if (isFirst)
 			{
@@ -146,7 +166,38 @@ public class Mediator
 				expandTree(node, false);
 			}
 		}
+		this.mibTree.repaint();
 	}
+	public void searchNodeByName()
+	{
+		this.holder.clear();
+		String condition = this.nameSearchField.getText();
+		List<MibInfo> list = MibInfoDao.getInstance().selectByName(condition);
+		if (list.size() == 0)
+		{
+			this.nameSearchField.grabFocus();
+			this.nameSearchField.setCaretPosition(0);
+		}
+		
+		boolean isFirst = true;
+		for (MibInfo info : list)
+		{
+			String oid =info.getOid();
+			MibTreeNode node = this.oidToMibTreeNode.get(oid);
+			this.holder.addNode(node);
+			if (isFirst)
+			{
+				expandTree(node, true);
+				isFirst = false;
+			}
+			else
+			{
+				expandTree(node, false);
+			}
+		}
+		this.mibTree.repaint();
+	}
+	
 	private void expandTree(MibTreeNode node, boolean isSelection)
 	{
         if (node == null)
@@ -158,9 +209,10 @@ public class Mediator
         TreePath path = new TreePath(node.getPath());
         this.mibTree.expandPath(path);
         if (isSelection)
-        {
+         {
             this.mibTree.scrollPathToVisible(path);
             this.mibTree.setSelectionPath(path);
+            this.mibTree.grabFocus();
         }
         this.mibTree.repaint();
 	}
@@ -179,6 +231,25 @@ public class Mediator
         }
         // TODO
 //        communicationPanel.updateOid();
+	}
+	
+	public Properties getProperties()
+	{
+		return this.prop;
+	}
+	
+	public void exit()
+	{
+		try {
+			this.prop.store(new FileOutputStream(PROP_FILE), "");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.exit(0);
 	}
 	
 }

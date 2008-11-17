@@ -13,7 +13,15 @@ public class MibInfoDao
 {
 	
 	private static MibInfoDao dao;
+	private static final String CONN_URL ="jdbc:h2:mem:mibible;DB_CLOSE_DELAY=-1";
+	private static final String CONN_USER ="sa";	
+	private static final String CONN_PASS ="";	
+	private static final String CREATE = "CREATE TABLE MIB(oid VARCHAR(255) PRIMARY KEY, name VARCHAR(255))";
+	private static final String DROP = "DROP TABLE IF EXISTS MIB";
+	private static final String DELETE = "DELETE FROM MIB";
 	private static final String INSERT = "INSERT INTO MIB VALUES(?, ?)";
+	private static final String SELECT_BY_OID = "SELECT oid, name FROM MIB WHERE oid LIKE ?";
+//	private static final String SELECT_BY_NAME = "SELECT oid, UPPER(name) FROM MIB WHERE name LIKE ?";
 	private static final String SELECT_BY_NAME = "SELECT oid, name FROM MIB WHERE name LIKE ?";
 	
 	private MibInfoDao()
@@ -21,12 +29,12 @@ public class MibInfoDao
 		try {
 			Class.forName("org.h2.Driver");
 			Connection conn = getConnection();
+			conn.setAutoCommit(false);
 			Statement statement = conn.createStatement();
-			statement.execute(
-		        "DROP TABLE IF EXISTS MIB");
-			statement.execute(
-			    "CREATE TABLE MIB(oid VARCHAR(255) PRIMARY KEY, name VARCHAR(255))");
+			statement.execute(DROP);
+			statement.execute(CREATE);
 			statement.close();
+			conn.commit();
 			conn.close();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -46,7 +54,7 @@ public class MibInfoDao
 	}
 	private Connection getConnection() throws SQLException
 	{
-		return DriverManager.getConnection("jdbc:h2:~/mibible", "sa", "");
+		return DriverManager.getConnection(CONN_URL, CONN_USER, CONN_PASS);
 	}
 	
 	public void deleteAll()
@@ -55,8 +63,9 @@ public class MibInfoDao
 			Connection conn = getConnection();
 			conn.setAutoCommit(false);
 			Statement statement = conn.createStatement();
-			statement.execute("DELETE FROM MIB");
+			statement.execute(DELETE);
 			statement.close();
+			conn.commit();
 			conn.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -73,7 +82,7 @@ public class MibInfoDao
 			for (MibInfo info : list)
 			{
 				statement.setString(1, info.getOid());
-				statement.setString(2, info.getName());
+				statement.setString(2, info.getName().toUpperCase());
 				statement.execute();
 			}
 			
@@ -85,15 +94,15 @@ public class MibInfoDao
 			e.printStackTrace();
 		}
 	}
-	public List<MibInfo> selectByName(String name)
+	public List<MibInfo> selectByOid(String oid)
 	{
 		List<MibInfo> list = new ArrayList<MibInfo>();
 		
 		try {
 			Connection conn = getConnection();
 			conn.setAutoCommit(false);
-			PreparedStatement statement  = conn.prepareStatement(SELECT_BY_NAME);
-			statement.setString(1, "%" + name + "%");
+			PreparedStatement statement  = conn.prepareStatement(SELECT_BY_OID);
+			statement.setString(1, "%" + oid + "%");
 			
 			ResultSet result = statement.executeQuery();
 			
@@ -105,6 +114,35 @@ public class MibInfoDao
 			}
 			
 			statement.close();
+			conn.commit();
+			conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return list;
+	}
+	public List<MibInfo> selectByName(String name)
+	{
+		List<MibInfo> list = new ArrayList<MibInfo>();
+		
+		try {
+			Connection conn = getConnection();
+			conn.setAutoCommit(false);
+			PreparedStatement statement  = conn.prepareStatement(SELECT_BY_NAME);
+			statement.setString(1, "%" + name.toUpperCase() + "%");
+			
+			ResultSet result = statement.executeQuery();
+			
+			while (result.next())
+			{
+				String infoOid = result.getString("oid");
+				String infoName = result.getString("name");
+				list.add(new MibInfo(infoOid, infoName));
+			}
+			
+			statement.close();
+			conn.commit();
 			conn.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
