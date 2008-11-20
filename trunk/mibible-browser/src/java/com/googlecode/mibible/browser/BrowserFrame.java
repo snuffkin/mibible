@@ -11,19 +11,19 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+
 import java.io.IOException;
 import java.util.Properties;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
 public class BrowserFrame extends JFrame
 {
@@ -100,16 +100,19 @@ public class BrowserFrame extends JFrame
         leftRightSplitPane.setLeftComponent(getTreePanel(mediator));
         leftRightSplitPane.setRightComponent(topBottomSplitPane);
         
-        // ステータスラベルを設定する
-        JLabel statusLabel = new JLabel();
+        // ステータスフィールドを設定する
+        JTextField statusField = new JTextField();
+        statusField.setEditable(false);
+        statusField.setBorder(new EmptyBorder(new Insets(2, 5, 2, 5)));
+        statusField.setBackground(getBackground());
         gbc = new GridBagConstraints();
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(2, 5, 2, 5);
-        getContentPane().add(statusLabel, gbc);
+        getContentPane().add(statusField, gbc);
         
         // Mediatorにコンポーネントを設定する
-        this.mediator.setStatusLabel(statusLabel);
+        this.mediator.setStatusField(statusField);
     }
 
     /**
@@ -136,9 +139,11 @@ public class BrowserFrame extends JFrame
     {
         // Create File menu
     	JMenu menu = new JMenu("File");
+    	menu.setMnemonic('F');
         
     	// Create Open MIB item
     	JMenuItem open = new JMenuItem("Open MIB...");
+    	open.setMnemonic('O');
     	open.addActionListener(new ActionListener()
     	{
             public void actionPerformed(ActionEvent e)
@@ -169,6 +174,7 @@ public class BrowserFrame extends JFrame
         
     	// Create Close MIB item
         JMenuItem close = new JMenuItem("Close MIB");
+        close.setMnemonic('C');
         close.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -195,8 +201,12 @@ public class BrowserFrame extends JFrame
 			final File file = new File(fileName);
 			String historyMenuStr;
 			try {
-				historyMenuStr = index + ": " + file.getName() + "[" + file.getCanonicalPath() + "]";
+				historyMenuStr = index + " " + file.getName() + "[" + file.getCanonicalPath() + "]";
 				JMenuItem historyMenu = new JMenuItem(historyMenuStr);
+				if (index < 10)
+				{
+					historyMenu.setMnemonic(String.valueOf(index).charAt(0));
+				}
 		        menu.add(historyMenu);
 		        historyMenu.addActionListener(new ActionListener()
 		        {
@@ -218,6 +228,7 @@ public class BrowserFrame extends JFrame
         
     	// Create Exit item
         JMenuItem exit = new JMenuItem("Exit");
+        exit.setMnemonic('E');
         exit.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -238,9 +249,11 @@ public class BrowserFrame extends JFrame
     {
         // Create Help menu
     	JMenu menu = new JMenu("Help");
+    	menu.setMnemonic('H');
         
     	// Create Open MIB item
     	JMenuItem about = new JMenuItem("About mibible");
+    	about.setMnemonic('A');
     	about.addActionListener(new ActionListener()
     	{
             public void actionPerformed(ActionEvent e)
