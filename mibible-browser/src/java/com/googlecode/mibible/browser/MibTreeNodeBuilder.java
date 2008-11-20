@@ -7,8 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JTree;
-
 import net.percederberg.mibble.Mib;
 import net.percederberg.mibble.MibSymbol;
 import net.percederberg.mibble.MibValue;

@@ -27,10 +27,6 @@ import net.percederberg.mibble.value.ObjectIdentifierValue;
  */
 public class MibTreeCellRenderer extends DefaultTreeCellRenderer
 {
-    /** Last tree the renderer was painted in. */
-    // TODO is this trash code?
-    private JTree tree;
-    
     /** NoticeNodeHolder */
     private NoticeNodeHolder holder;
     
@@ -164,7 +160,6 @@ public class MibTreeCellRenderer extends DefaultTreeCellRenderer
             = tree.convertValueToText(tempValue, sel,
                                       expanded, leaf, row, hasFocus);
 
-        this.tree = tree;
         this.hasFocus = hasFocus;
         setText(stringValue);
 

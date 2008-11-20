@@ -6,11 +6,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
-import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
@@ -35,8 +36,8 @@ public class Mediator
         = new HashMap<String, MibTreeNode>();
 	private NoticeNodeHolder holder = new NoticeNodeHolder();
 
-	/** Status Label */
-    private JLabel statusLabel;
+	/** Status field */
+    private JTextField statusField;
     /** Name Search field */
     private JTextField nameSearchField;
     /** OID Search field */
@@ -67,11 +68,11 @@ public class Mediator
 		return holder;
 	}
 	/**
-	 * @param statusLabel the statusLabel to set
+	 * @param statusField the statusField to set
 	 */
-	public void setStatusLabel(JLabel statusLabel) {
-		this.statusLabel = statusLabel;
-		this.statusLabel.setText("Ready.");
+	public void setStatusField(JTextField statusField) {
+		this.statusField = statusField;
+		this.statusField.setText("Ready.");
 	}
 	/**
 	 * @param nameSearchField the nameSearchField to set
@@ -116,6 +117,7 @@ public class Mediator
 			DefaultTreeModel model = new DefaultTreeModel(root);
 			this.mibTree.setModel(model);
 			model.reload();
+			this.addMibHistory(file);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -139,6 +141,40 @@ public class Mediator
 			openMib(file);
 		}
 	}
+	private void addMibHistory(File file)
+	{
+		String newFile = "";
+		try {
+			newFile = file.getCanonicalPath();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		Properties prop = this.getProperties();
+		String historyStr = prop.getProperty("mibbrowser.history", "0");
+		int history = Integer.valueOf(historyStr);
+		Set<String> newHistorySet = new LinkedHashSet<String>();
+		newHistorySet.add(newFile);
+		
+		for (int index = 1; index < history; index++)
+		{
+			String key = "mibbrowser.history." + index;
+			String value = prop.getProperty(key);
+			if (   !newHistorySet.contains(value)
+			    && value != null)
+			{
+				newHistorySet.add(value);
+			}
+		}
+		int index = 1;
+		for (String value : newHistorySet)
+		{
+			prop.put("mibbrowser.history." + index, value);
+			index++;
+		}
+	}
+	
 	public void unloadMib()
 	{
 		// TODO　複数MIB表示に対応する必要あり
@@ -164,7 +200,7 @@ public class Mediator
 		{
 			this.oidSearchField.grabFocus();
 			this.oidSearchField.setCaretPosition(0);
-			this.statusLabel.setText("No item hits.");
+			this.statusField.setText("No items hit.");
 		}
 		
 		boolean isFirst = true;
@@ -176,7 +212,7 @@ public class Mediator
 			if (isFirst)
 			{
 				expandTree(node, true);
-				this.statusLabel.setText(node.getName() + " " + node.getOid());
+				this.statusField.setText(node.getName() + " " + node.getOid());
 				isFirst = false;
 			}
 			else
@@ -195,7 +231,7 @@ public class Mediator
 		{
 			this.nameSearchField.grabFocus();
 			this.nameSearchField.setCaretPosition(0);
-			this.statusLabel.setText("No item hits.");
+			this.statusField.setText("No items hit.");
 		}
 		
 		boolean isFirst = true;
@@ -207,7 +243,7 @@ public class Mediator
 			if (isFirst)
 			{
 				expandTree(node, true);
-				this.statusLabel.setText(node.getName() + " " + node.getOid());
+				this.statusField.setText(node.getName() + " " + node.getOid());
 				isFirst = false;
 			}
 			else
@@ -243,13 +279,13 @@ public class Mediator
         if (node == null)
         {
             this.descriptionArea.setText("");
-            this.statusLabel.setText("");
+            this.statusField.setText("");
         }
         else
         {
         	this.descriptionArea.setText(node.getDescription());
         	this.descriptionArea.setCaretPosition(0);
-            this.statusLabel.setText(node.getName() + " " + node.getOid());
+            this.statusField.setText(node.getName() + " " + node.getOid());
         }
         // TODO
 //        communicationPanel.updateOid();
@@ -259,11 +295,10 @@ public class Mediator
 	{
 		return this.prop;
 	}
-	
-	public void exit()
+	private void storeProperties()
 	{
 		try {
-			this.prop.store(new FileOutputStream(PROP_FILE), "");
+			this.prop.store(new FileOutputStream(PROP_FILE), "mibbrowser.properties");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -271,6 +306,11 @@ public class Mediator
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public void exit()
+	{
+		this.storeProperties();
 		System.exit(0);
 	}
 	
