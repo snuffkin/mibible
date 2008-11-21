@@ -47,6 +47,8 @@ public class Mediator
 	/** Description Area */
 	private JTextArea descriptionArea;
 	
+	private BrowserFrame browser;
+	
 	public Mediator()
 	{
         this.prop = new Properties();
@@ -101,6 +103,13 @@ public class Mediator
 		this.descriptionArea = descriptionArea;
 		this.descriptionArea.setText("");
 	}
+	/**
+	 * @param BrowserFrame the browser to set
+	 */
+	public void setBrowserFrame(BrowserFrame browser) {
+		this.browser = browser;
+	}
+
 
 	public void openMib(File file)
 	{
@@ -118,6 +127,7 @@ public class Mediator
 			this.mibTree.setModel(model);
 			model.reload();
 			this.addMibHistory(file);
+			this.browser.updateHistoryMenu();
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
