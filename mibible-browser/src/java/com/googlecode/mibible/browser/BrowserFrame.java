@@ -13,6 +13,7 @@ import java.awt.event.WindowListener;
 import java.io.File;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
 import javax.swing.JFileChooser;
@@ -20,10 +21,13 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+
+import com.sun.org.apache.xalan.internal.xsltc.compiler.Pattern;
 
 public class BrowserFrame extends JFrame
 {
@@ -33,11 +37,17 @@ public class BrowserFrame extends JFrame
 	/** Mediator */
 	private Mediator mediator = new Mediator();
 	
+	/** File Menu */
+	private JMenuBar menuBar = new JMenuBar();
+	
 	/**
 	 * Frameの初期表示を行う。
 	 */
     public void initialize()
     {
+    	// Mediatorへの設定
+    	this.mediator.setBrowserFrame(this);
+    	
     	// Frameの初期表示領域の設定
         Rectangle bounds = new Rectangle();
         Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
@@ -63,7 +73,8 @@ public class BrowserFrame extends JFrame
 			public void windowOpened(WindowEvent e) {}
         });
         // メニューを設定する
-        setJMenuBar(getMenu());
+        this.menuBar = getMenu();
+        setJMenuBar(this.menuBar);
         // Frameにレイアウトを設定する
         getContentPane().setLayout(new GridBagLayout());
         
@@ -170,7 +181,7 @@ public class BrowserFrame extends JFrame
                 }
             }
         });
-        menu.add(open);
+    	menu.add(open);
         
     	// Create Close MIB item
         JMenuItem close = new JMenuItem("Close MIB");
@@ -198,7 +209,7 @@ public class BrowserFrame extends JFrame
 			{
 				continue;
 			}
-			final File file = new File(fileName);
+			File file = new File(fileName);
 			String historyMenuStr;
 			try {
 				historyMenuStr = index + " " + file.getName() + "[" + file.getCanonicalPath() + "]";
@@ -207,12 +218,19 @@ public class BrowserFrame extends JFrame
 				{
 					historyMenu.setMnemonic(String.valueOf(index).charAt(0));
 				}
-		        menu.add(historyMenu);
+				menu.add(historyMenu);
 		        historyMenu.addActionListener(new ActionListener()
 		        {
 		            public void actionPerformed(ActionEvent e)
 		            {
-		            	BrowserFrame.this.mediator.openMib(file);
+		            	// TODO パースが汚い
+		            	String fileName = e.getActionCommand();
+		            	String[] tmp = fileName.split("\\[");
+		            	if (tmp.length > 0)
+		            	{
+		            		String[] tmp2 = tmp[1].split("\\]");
+			            	BrowserFrame.this.mediator.openMib(new File(tmp2[0]));
+		            	}
 		            }
 		        });
 			} catch (IOException e1) {
@@ -223,7 +241,7 @@ public class BrowserFrame extends JFrame
 		if (history > 0)
 		{
 	        // Create Separator
-	        menu.addSeparator();
+			menu.addSeparator();
 		}
         
     	// Create Exit item
@@ -239,6 +257,15 @@ public class BrowserFrame extends JFrame
         menu.add(exit);
         
     	return menu;
+    }
+    
+    public void updateHistoryMenu()
+    {
+    	// TODO
+    	remove(this.menuBar);
+        this.menuBar = getMenu();
+        setJMenuBar(this.menuBar);
+    	repaint();
     }
     
     /**
@@ -259,6 +286,7 @@ public class BrowserFrame extends JFrame
             public void actionPerformed(ActionEvent e)
             {
             	// TODO
+            	JOptionPane.showMessageDialog(BrowserFrame.this, "sorry. under construction.");
 //                loadMib();
             }
         });
