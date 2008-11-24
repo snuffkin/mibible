@@ -12,13 +12,12 @@ import net.percederberg.mibble.value.ObjectIdentifierValue;
  * @author snuffkin
  * @since 0.2.0
  */
-public class ShortTextualOidFilter extends PrintFilter
-{
+public class ShortTextualOidFilter extends PrintFilter {
+	
     /**
      * コンストラクタ。
      */
-    public ShortTextualOidFilter()
-    {
+    public ShortTextualOidFilter() {
         super("%text");
     }
     
@@ -26,8 +25,7 @@ public class ShortTextualOidFilter extends PrintFilter
      * {@inheritDoc}
      */
     @Override
-    public String getPrintString(ObjectIdentifierValue oid)
-    {
+    public String getPrintString(ObjectIdentifierValue oid) {
         return oid.getName();
     }
 }

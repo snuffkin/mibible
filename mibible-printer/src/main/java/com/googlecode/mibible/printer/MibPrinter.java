@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.googlecode.mibible.printer.filter.MaxAccessFilter;
 import com.googlecode.mibible.printer.filter.TextNumFilter;
 import com.googlecode.mibible.printer.filter.ShortTextualOidFilter;
 import com.googlecode.mibible.printer.filter.ShortNumericOidFilter;
@@ -31,8 +32,8 @@ import net.percederberg.mibble.value.ObjectIdentifierValue;
  * @author snuffkin
  * @since 0.2.0
  */
-public class MibPrinter
-{
+public class MibPrinter {
+	
     /** ヘルプ文字列 */
     private static final String COMMAND_HELP
         = "Usage: mibprinter <format> <file or URL>\n";
@@ -45,15 +46,25 @@ public class MibPrinter
     /** 引数「file or URL」の位置を表す定数 */
     private static final int ARGS_TARGET = 1;
     
+    /** mibible printerが用意している全PrintFilterのリスト */
+    private static final PrintFilter[] allFilters = new PrintFilter[] {
+        new LongNumericOidFilter(),
+        new LongTextualOidFilter(),
+        new MaxAccessFilter(),
+        new ShortNumericOidFilter(),
+        new ShortTextualOidFilter(),
+        new TextNumFilter(),
+        new TypeFilter()
+    };
+    
     /**
      * 指定されたフォーマットで、指定されたMIBファイルを出力する。
+     * 
      * @param args {フォーマット, MIBファイル}
      */
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         // 引数が少ないときはHELPを出力して終了する
-        if (args.length != NUM_OF_ARGS)
-        {
+        if (args.length != NUM_OF_ARGS) {
             System.out.println(COMMAND_HELP);
             System.exit(1);
         }
@@ -65,38 +76,26 @@ public class MibPrinter
         
         // MIB出力クラス
         MibPrinter printer = null;
-        try
-        {
+        try {
             // MIBを読み込む
-            try
-            {
+            try {
                 // URLからMIBを読み込む
                 URL url = new URL(target);
                 printer = new MibPrinter(url);
-            }
-            catch (MalformedURLException exception)
-            {
+            } catch (MalformedURLException exception) {
                 // ファイルからMIBを読み込む
                 printer = new MibPrinter(new File(target));
             }
-        }
-        catch (FileNotFoundException ex)
-        {
+        } catch (FileNotFoundException ex) {
             ex.printStackTrace();
             System.exit(1);
-        }
-        catch (IOException ex)
-        {
+        } catch (IOException ex) {
             ex.printStackTrace();
             System.exit(1);
-        }
-        catch (MibLoaderException ex)
-        {
+        } catch (MibLoaderException ex) {
             ex.printStackTrace();
             System.exit(1);
-        }
-        catch (RuntimeException ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
             System.exit(1);
         }
@@ -121,20 +120,11 @@ public class MibPrinter
      * @throws IOException　指定したファイルを読み込めない場合に発生する
      * @throws MibLoaderException 指定したMIBファイルがパースできない場合に発生する
      */
-    public MibPrinter(File file) throws IOException, MibLoaderException
-    {
+    public MibPrinter(File file) throws IOException, MibLoaderException {
         MibLoader loader = new MibLoader();
         loader.addDir(file.getParentFile());
         this.mib = loader.load(file);
         this.rootOid = getRootOid(this.mib);
-        
-        // TODO いずれ高速化対応が必要
-        this.filterList.add(new TextNumFilter());
-        this.filterList.add(new ShortTextualOidFilter());
-        this.filterList.add(new ShortNumericOidFilter());
-        this.filterList.add(new LongNumericOidFilter());
-        this.filterList.add(new LongTextualOidFilter());
-        this.filterList.add(new TypeFilter());
     }
     
     /**
@@ -144,19 +134,10 @@ public class MibPrinter
      * @throws IOException　指定したファイルを読み込めない場合に発生する
      * @throws MibLoaderException 指定したMIBファイルがパースできない場合に発生する
      */
-    public MibPrinter(URL url) throws IOException, MibLoaderException
-    {
+    public MibPrinter(URL url) throws IOException, MibLoaderException {
         MibLoader loader = new MibLoader();
         this.mib = loader.load(url);
         this.rootOid = getRootOid(this.mib);
-        
-        // TODO いずれ高速化対応が必要
-        this.filterList.add(new TextNumFilter());
-        this.filterList.add(new ShortTextualOidFilter());
-        this.filterList.add(new ShortNumericOidFilter());
-        this.filterList.add(new LongNumericOidFilter());
-        this.filterList.add(new LongTextualOidFilter());
-        this.filterList.add(new TypeFilter());
     }
     
     /**
@@ -165,34 +146,28 @@ public class MibPrinter
      * @param mib rootのOIDオブジェクトを取得したいMIB情報
      * @return rootのOIDオブジェクト
      */
-    private static ObjectIdentifierValue getRootOid(Mib mib)
-    {
+    private static ObjectIdentifierValue getRootOid(Mib mib) {
         ObjectIdentifierValue root = null;
 
         // 最初に見つかったOID情報を取得する
         Iterator iter = mib.getAllSymbols().iterator();
-        while (root == null && iter.hasNext())
-        {
+        while (root == null && iter.hasNext()) {
             MibSymbol symbol = (MibSymbol) iter.next();
-            if (symbol instanceof MibValueSymbol)
-            {
+            if (symbol instanceof MibValueSymbol) {
                 MibValue value = ((MibValueSymbol) symbol).getValue();
-                if (value instanceof ObjectIdentifierValue)
-                {
+                if (value instanceof ObjectIdentifierValue) {
                     root = (ObjectIdentifierValue) value;
                 }
             }
         }
-        if (root == null)
-        {
+        if (root == null) {
             // OIDがない場合はroot oidはnull
             System.out.println("no OID value");
             return null;
         }
 
         // 取得したOIDから上位にたどり、rootのOIDを取得する
-        while (root.getParent() != null)
-        {
+        while (root.getParent() != null) {
             root = root.getParent();
         }
         return root;
@@ -203,8 +178,21 @@ public class MibPrinter
      * 
      * @param format 出力フォーマット
      */
-    public void printMib(String format)
-    {
+    public void printMib(String format) {
+    	// 適用するPrintFilterの一覧をクリアする
+    	this.filterList.clear();
+    	
+    	// 適用するPrintFilterの一覧を作成する
+    	for (PrintFilter filter : allFilters) {
+            String key = filter.getFilterKey();
+            // 適用すべきPrintFilterかどうか、出力フォーマットを確認する
+            if (format.contains(key)) {
+                // 適用するPrintFilterの一覧に追加する
+            	this.filterList.add(filter);
+            }
+    	}
+    	
+    	// MIB情報を出力する
         printOid(this.rootOid, format);
     }
     
@@ -214,28 +202,20 @@ public class MibPrinter
      * @param oid 出力するOID
      * @param format 出力フォーマット
      */
-    private void printOid(ObjectIdentifierValue oid, String format)
-    {
+    private void printOid(ObjectIdentifierValue oid, String format) {
         String output = format;
-        for (PrintFilter filter : this.filterList)
-        {
-            String key = filter.getFilterKey();
-            // 適用すべきPrintFilterかどうか、出力フォーマットを確認する
-            if (format.contains(key))
-            {
-                // PrintFilterを適用する
-                String printString = filter.getPrintString(oid);
-                output = output.replace(key, printString);
-            }
+        for (PrintFilter filter : this.filterList) {
+            // PrintFilterを適用する
+            String printString = filter.getPrintString(oid);
+            output = output.replace(filter.getFilterKey(), printString);
         }
         
         // PrintFilterを適用後のMIB情報を出力する
         System.out.println(output);
         
         // 子OIDに対して、再帰的にし出力処理を実行する
-        for (int i = 0; i < oid.getChildCount(); i++)
-        {
-            printOid(oid.getChild(i), format);
+        for (int index = 0; index < oid.getChildCount(); index++) {
+            printOid(oid.getChild(index), format);
         }
     }
 }

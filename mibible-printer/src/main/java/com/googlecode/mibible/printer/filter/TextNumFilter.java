@@ -13,13 +13,12 @@ ry(1).ifOperStatus(8)
  * @author snuffkin
  * @since 0.2.0
  */
-public class TextNumFilter extends PrintFilter
-{
+public class TextNumFilter extends PrintFilter {
+	
     /**
      * コンストラクタ。
      */
-	public TextNumFilter()
-	{
+	public TextNumFilter() {
 		super("%TN");
 	}
 	
@@ -27,8 +26,7 @@ public class TextNumFilter extends PrintFilter
      * {@inheritDoc}
      */
 	@Override
-	public String getPrintString(ObjectIdentifierValue oid)
-	{
+	public String getPrintString(ObjectIdentifierValue oid) {
 		return oid.toDetailString();
 	}
 }
