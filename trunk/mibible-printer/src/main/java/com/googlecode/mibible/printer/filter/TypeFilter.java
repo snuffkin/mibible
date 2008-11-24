@@ -12,13 +12,12 @@ import net.percederberg.mibble.value.ObjectIdentifierValue;
  * @author snuffkin
  * @since 0.2.0
  */
-public class TypeFilter extends PrintFilter
-{
+public class TypeFilter extends PrintFilter {
+	
     /**
      * コンストラクタ。
      */
-    public TypeFilter()
-    {
+    public TypeFilter() {
         super("%type");
     }
     
@@ -26,8 +25,7 @@ public class TypeFilter extends PrintFilter
      * {@inheritDoc}
      */
     @Override
-    public String getPrintString(ObjectIdentifierValue oid)
-    {
+    public String getPrintString(ObjectIdentifierValue oid) {
         return oid.getSymbol().getType().getName();
     }
 }

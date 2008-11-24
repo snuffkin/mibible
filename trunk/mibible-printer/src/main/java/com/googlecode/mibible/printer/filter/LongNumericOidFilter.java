@@ -12,13 +12,12 @@ import net.percederberg.mibble.value.ObjectIdentifierValue;
  * @author snuffkin
  * @since 0.2.0
  */
-public class LongNumericOidFilter extends PrintFilter
-{
+public class LongNumericOidFilter extends PrintFilter {
+	
     /**
      * コンストラクタ。
      */
-    public LongNumericOidFilter()
-    {
+    public LongNumericOidFilter() {
         super("%Num");
     }
     
@@ -26,20 +25,15 @@ public class LongNumericOidFilter extends PrintFilter
      * {@inheritDoc}
      */
     @Override
-    public String getPrintString(ObjectIdentifierValue oid)
-    {
+    public String getPrintString(ObjectIdentifierValue oid) {
         ObjectIdentifierValue tmpOid = oid;
         String ret = "";
         
         // 末端からから上位の順に、numeric formを作成する
-        while (tmpOid != null)
-        {
-            if (ret.equals(""))
-            {
+        while (tmpOid != null) {
+            if (ret.equals("")) {
                 ret = String.valueOf(tmpOid.getValue());
-            }
-            else
-            {
+            } else {
                 ret = tmpOid.getValue() + "." + ret;
             }
             tmpOid = tmpOid.getParent();
