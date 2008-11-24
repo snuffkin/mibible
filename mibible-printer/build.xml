@@ -33,7 +33,7 @@
     </tstamp>
     <property name="build.date" value="${DSTAMP}" />
     <property name="build.name" value="mibible-printer" />
-    <property name="build.version" value="0.2.0" />
+    <property name="build.version" value="0.3.0ea" />
   </target>
 
 
