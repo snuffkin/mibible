@@ -100,7 +100,9 @@ public class BrowserFrame extends JFrame
         // 右側のPane内部をを上下に分けるPaneのレイアウトを設定する
         JSplitPane topBottomSplitPane = new JSplitPane();
         topBottomSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-        topBottomSplitPane.setDividerLocation((int) (bounds.height * 0.40));
+        // TODO communication　panelができるまでの暫定処置
+//        topBottomSplitPane.setDividerLocation((int) (bounds.height * 0.40));
+        topBottomSplitPane.setDividerLocation((int) (bounds.height));
         topBottomSplitPane.setOneTouchExpandable(true);
         
         // 右側のPane内部をを上下に分けるPaneの中身を設定する
