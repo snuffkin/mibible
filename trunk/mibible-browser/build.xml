@@ -33,7 +33,7 @@
     </tstamp>
     <property name="build.date" value="${DSTAMP}" />
     <property name="build.name" value="mibible-browser" />
-    <property name="build.version" value="0.2.0" />
+    <property name="build.version" value="0.3.0beta" />
   </target>
 
 
