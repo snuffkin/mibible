@@ -3,44 +3,48 @@ package com.googlecode.mibible.browser;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
+/**
+ * the main class of mibible browser.
+ * @author snuffkin
+ */
 public class MibBrowser {
 
 	/**
-	 * @param args
+	 * execute mibible browser.
+	 * @param args invalid
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
 		MibBrowser browser = new MibBrowser();
 		browser.initialize();
 	}
 	
-	public MibBrowser()
-	{
-        // Open browser frame
-        try
-        {
+	/**
+	 * set look and feel.
+	 */
+	public MibBrowser() {
+        try {
             String laf = UIManager.getSystemLookAndFeelClassName();
             UIManager.setLookAndFeel(laf);
-            MibInfoDao.getInstance();
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
         	ex.printStackTrace();
         }
 	}
 	
-	public void initialize()
-	{
-		JFrame frame = getBrowserFrame();
+	/**
+	 * initialize frame.
+	 */
+	public void initialize() {
+		JFrame frame = createBrowserFrame();
 		frame.setVisible(true);
 	}
 	
-	private JFrame getBrowserFrame()
-	{
+	/**
+	 * create browser frame.
+	 * @return browser frame
+	 */
+	private JFrame createBrowserFrame() {
 		BrowserFrame frame = new BrowserFrame();
 		frame.initialize();
 		return frame;
 	}
-
 }
