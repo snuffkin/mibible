@@ -20,17 +20,22 @@ mibible README
         14 ウィンドウサイズ変更時にツリーのレイアウトが崩れる
 
   2008/10/23 ver 0.1.1 release
+    Issues Summary
          8 PrintされるMIBツリーのフォーマットを変更したい(暫定)
 
   2008/10/25 ver 0.2.0 release
+    Issues Summary
          8 PrintされるMIBツリーのフォーマットを変更したい(正式対応)
 
-  2008/11/xx ver 0.2.1 release
-
-        13 過去に表示したMIBファイルの履歴からMIBツリーを開きたい(暫定)
-        21 部分一致で検索したい(暫定)
-        24 ツリーで選択している項目をステータスバーに表示したい
-        25 PrinterをJava5対応にする
+  2008/11/25 ver 0.3.0beta release
+    Issues Summary
+        13 過去に表示したMIBファイルの履歴からMIBツリーを開きたい
+        21 部分一致で検索できるようにする
+        24 ツリーで選択している項目をステータスバーに表示する
+        25 printerをJava5対応にする
         26 ブラウザの内部データをメモリDBに持たせる
+        27 printerでMAX-ACCESSを表示する
 
-
+    Restriction
+           SNMP電文の送受信はできません。
+           0.3.0正式版ではSNMP電文の送受信を行えるようにします。
