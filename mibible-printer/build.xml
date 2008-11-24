@@ -70,7 +70,7 @@
   </target>
 
   <target name="compile-java-optimized" unless="build.debug">
-    <javac srcdir="src/java"
+    <javac srcdir="src/main/java"
            destdir="classes"
            classpathref="project.class.path"
            encoding="UTF-8"
@@ -82,7 +82,7 @@
   </target>
 
   <target name="compile-java-debug" if="build.debug">
-    <javac srcdir="src/java"
+    <javac srcdir="src/main/java"
            destdir="classes"
            classpathref="project.class.path"
            encoding="UTF-8"
@@ -102,7 +102,7 @@
 
   <target name="doc-java">
     <javadoc packagenames="com.googlecode.mibible.printer.*"
-             sourcepath="src/java"
+             sourcepath="src/main/java"
              destdir="doc/api"
              classpath="classes"
              classpathref="project.class.path"
