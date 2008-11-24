@@ -139,7 +139,8 @@ public class BrowserFrame extends JFrame
         // Fileメニューを追加する
         menuBar.add(getFileMenu());
         // Helpメニューを追加する
-        menuBar.add(getHelpMenu());
+        // TODO
+//        menuBar.add(getHelpMenu());
     	
     	return menuBar;
     }
@@ -209,6 +210,7 @@ public class BrowserFrame extends JFrame
         Properties prop = BrowserFrame.this.mediator.getProperties();
 		String historyStr = prop.getProperty("mibbrowser.history", "0");
 		int history = Integer.valueOf(historyStr);
+		boolean displayHistory = false; // ヒストリがある場合だけseparatorを引く
 		for (int index = 1; index <= history; index++)
 		{
 			String fileName = prop.getProperty("mibbrowser.history." + index, "");
@@ -226,6 +228,7 @@ public class BrowserFrame extends JFrame
 					historyMenu.setMnemonic(String.valueOf(index).charAt(0));
 				}
 				menu.add(historyMenu);
+				displayHistory = true;
 		        historyMenu.addActionListener(new ActionListener()
 		        {
 		            public void actionPerformed(ActionEvent e)
@@ -245,7 +248,7 @@ public class BrowserFrame extends JFrame
 				e1.printStackTrace();
 			}
 		}
-		if (history > 0)
+		if (displayHistory)
 		{
 	        // Create Separator
 			menu.addSeparator();
