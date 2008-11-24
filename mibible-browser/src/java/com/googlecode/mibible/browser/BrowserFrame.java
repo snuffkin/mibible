@@ -151,7 +151,12 @@ public class BrowserFrame extends JFrame
         // Create File menu
     	JMenu menu = new JMenu("File");
     	menu.setMnemonic('F');
-        
+    	this.updateFileMenu(menu);
+    	
+    	return menu;
+    }
+    
+    private void updateFileMenu(JMenu menu) {
     	// Create Open MIB item
     	JMenuItem open = new JMenuItem("Open MIB...");
     	open.setMnemonic('O');
@@ -255,8 +260,6 @@ public class BrowserFrame extends JFrame
             }
         });
         menu.add(exit);
-        
-    	return menu;
     }
     
     public void updateHistoryMenu()
@@ -265,130 +268,7 @@ public class BrowserFrame extends JFrame
     	menu.removeAll();
     	
     	// Create Open MIB item
-    	JMenuItem open = new JMenuItem("Open MIB...");
-    	open.setMnemonic('O');
-    	open.addActionListener(new ActionListener()
-    	{
-            public void actionPerformed(ActionEvent e)
-            {
-            	Properties prop = BrowserFrame.this.mediator.getProperties();
-            	String openDirectory = prop.getProperty(Mediator.FILE_CHOOSER_DIRECTORY, ".");
-                JFileChooser  dialog = new JFileChooser(new File(openDirectory));
-                File[]        files;
-                int           result;
-
-                dialog.setMultiSelectionEnabled(true);
-                result = dialog.showOpenDialog(BrowserFrame.this);
-                if (result == JFileChooser.APPROVE_OPTION)
-                {
-                    files = dialog.getSelectedFiles();
-                    BrowserFrame.this.mediator.openMib(files);
-                    // TODO
-//                    BrowserFrdescriptionArea.setText("");
-                    if (files.length > 0)
-                    {
-                    	openDirectory = files[0].getParent();
-                    	prop.setProperty(Mediator.FILE_CHOOSER_DIRECTORY, openDirectory);
-                    }
-                }
-            }
-        });
-    	menu.add(open);
-        
-    	// Create Close MIB item
-        JMenuItem close = new JMenuItem("Close MIB");
-        close.setMnemonic('C');
-        close.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                BrowserFrame.this.mediator.unloadMib();
-            }
-        });
-        menu.add(close);
-        
-        // Create Separator
-        menu.addSeparator();
-        
-        // Create History
-        Properties prop = BrowserFrame.this.mediator.getProperties();
-		String historyStr = prop.getProperty("mibbrowser.history", "0");
-		int history = Integer.valueOf(historyStr);
-		for (int index = 1; index <= history; index++)
-		{
-			String fileName = prop.getProperty("mibbrowser.history." + index, "");
-			if (fileName.equals(""))
-			{
-				continue;
-			}
-			File file = new File(fileName);
-			String historyMenuStr;
-			try {
-				historyMenuStr = index + " " + file.getName() + " [" + file.getCanonicalPath() + "]";
-				JMenuItem historyMenu = new JMenuItem(historyMenuStr);
-				if (index < 10)
-				{
-					historyMenu.setMnemonic(String.valueOf(index).charAt(0));
-				}
-				menu.add(historyMenu);
-		        historyMenu.addActionListener(new ActionListener()
-		        {
-		            public void actionPerformed(ActionEvent e)
-		            {
-		            	// TODO パースが汚い
-		            	String fileName = e.getActionCommand();
-		            	String[] tmp = fileName.split("\\[");
-		            	if (tmp.length > 0)
-		            	{
-		            		String[] tmp2 = tmp[1].split("\\]");
-			            	BrowserFrame.this.mediator.openMib(new File(tmp2[0]));
-		            	}
-		            }
-		        });
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}
-		if (history > 0)
-		{
-	        // Create Separator
-			menu.addSeparator();
-		}
-        
-    	// Create Exit item
-        JMenuItem exit = new JMenuItem("Exit");
-        exit.setMnemonic('E');
-        exit.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-            	BrowserFrame.this.mediator.exit();
-            }
-        });
-        menu.add(exit);
-    	
-//    	this.getFileMenu();
-/**
-    	menu.remove(3);
-    	menu.remove(3);
-    	menu.remove(3);
-    	menu.remove(3);
-    	menu.remove(3);
-    	menu.insert(new JMenuItem("hoge1"), 3);
-    	menu.insert(new JMenuItem("hoge2"), 4);
-    	menu.insert(new JMenuItem("hoge3"), 5);
-    	menu.insert(new JMenuItem("hoge4"), 6);
-    	menu.insert(new JMenuItem("hoge5"), 7);
-*/
-    	
-    	/**
-    	// TODO
-    	remove(this.menuBar);
-        this.menuBar = getMenu();
-        setJMenuBar(this.menuBar);
-*/
-    	repaint();
+    	this.updateFileMenu(menu);
     }
     
     /**
@@ -410,7 +290,6 @@ public class BrowserFrame extends JFrame
             {
             	// TODO
             	JOptionPane.showMessageDialog(BrowserFrame.this, "sorry. under construction.");
-//                loadMib();
             }
         });
         menu.add(about);
