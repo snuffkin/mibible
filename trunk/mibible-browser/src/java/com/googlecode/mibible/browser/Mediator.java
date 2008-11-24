@@ -24,10 +24,7 @@ import net.percederberg.mibble.MibLoaderException;
 
 public class Mediator
 {
-	private static final String MIBIBLE_HOME = System.getenv("MIBIBLE_HOME");
-	
 	public static final String FILE_CHOOSER_DIRECTORY = "fileChooserDirectory";
-	private static final String PROP_FILE = MIBIBLE_HOME + "/conf/mibbrowser.properties";
 	private Properties prop;
 
 	private Map<String, MibTreeNode> oidToMibTreeNode
@@ -48,6 +45,18 @@ public class Mediator
 	private JTextArea descriptionArea;
 	
 	private BrowserFrame browser;
+	
+	private static final String MIBIBLE_HOME;
+	
+	static {
+		String env = System.getenv("MIBIBLE_HOME");
+		if (env == null) {
+			MIBIBLE_HOME = ".";
+		} else {
+			MIBIBLE_HOME = env;
+		}
+	}
+	private static final String PROP_FILE = MIBIBLE_HOME + "/conf/mibbrowser.properties";
 	
 	public Mediator()
 	{
