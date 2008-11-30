@@ -15,5 +15,8 @@ public class MibInfo
 	public String getName() {
 		return name;
 	}
+	public String getUpperName() {
+		return name.toUpperCase();
+	}
 
 }

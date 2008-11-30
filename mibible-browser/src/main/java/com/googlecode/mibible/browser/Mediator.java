@@ -272,6 +272,37 @@ public class Mediator
 		}
 		this.mibTree.repaint();
 	}
+	public void searchNodeByUpperName()
+	{
+		this.holder.clear();
+		String condition = this.nameSearchField.getText();
+		List<MibInfo> list = MibInfoDao.getInstance().selectByUpperName(condition);
+		if (list.size() == 0)
+		{
+			this.nameSearchField.grabFocus();
+			this.nameSearchField.setCaretPosition(0);
+			this.statusField.setText("No items hit.");
+		}
+		
+		boolean isFirst = true;
+		for (MibInfo info : list)
+		{
+			String oid =info.getOid();
+			MibTreeNode node = this.oidToMibTreeNode.get(oid);
+			this.holder.addNode(node);
+			if (isFirst)
+			{
+				expandTree(node, true);
+				this.statusField.setText(node.getName() + " " + node.getOid());
+				isFirst = false;
+			}
+			else
+			{
+				expandTree(node, false);
+			}
+		}
+		this.mibTree.repaint();
+	}
 	
 	private void expandTree(MibTreeNode node, boolean isSelection)
 	{

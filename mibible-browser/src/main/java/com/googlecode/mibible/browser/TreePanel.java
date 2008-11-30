@@ -177,7 +177,9 @@ public class TreePanel extends JPanel
         {
             public void actionPerformed(ActionEvent e)
             {
-            	TreePanel.this.mediator.searchNodeByName();
+            	// TODO 使いわけ
+//            	TreePanel.this.mediator.searchNodeByName();
+            	TreePanel.this.mediator.searchNodeByUpperName();
             }
         });
         
