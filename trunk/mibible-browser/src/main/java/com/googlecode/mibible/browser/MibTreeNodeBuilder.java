@@ -35,31 +35,24 @@ public class MibTreeNodeBuilder
      */
     public MibTreeNode mib2node(Mib mib)
     {
-        Iterator   iter = mib.getAllSymbols().iterator();
+        Iterator<MibSymbol> iter = mib.getAllSymbols().iterator();
         MibSymbol  symbol;
         MibTreeNode    root;
-        MibTreeNode    node;
         List<MibInfo>  list = new ArrayList<MibInfo>();
 
         // Create value sub tree
-        node = new MibTreeNode("VALUES", null);
+	    root = new MibTreeNode(mib.getName(), null);
         while (iter.hasNext()) {
         	// valueTreeにMibSymbolを追加する
-            symbol = (MibSymbol) iter.next();
-            addSymbol(node, symbol, list);
+            symbol = iter.next();
+            addSymbol(root, symbol, list);
         }
         
         // MIB情報を内部のテーブルに保存する
         MibInfoDao dao = MibInfoDao.getInstance();
         dao.deleteAll();
-        dao.insert(list);
+        dao.insert(mib.getName(), list);
 
-        // TODO: create TYPES sub tree
-
-        // Add sub tree root to MIB tree
-	    root = new MibTreeNode(mib.getName(), null);
-	    root.add(node);
-        
         return root;
     }
 
@@ -116,7 +109,6 @@ public class MibTreeNodeBuilder
         }
 
         // Create new node
-//        name = oid.getName() + " (" + oid.getValue() + ")";
         name = oid.getName();
         node = new MibTreeNode(name, oid);
         parent.add(node);
