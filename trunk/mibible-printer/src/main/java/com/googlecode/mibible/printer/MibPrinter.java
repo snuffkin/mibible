@@ -108,9 +108,7 @@ public class MibPrinter {
     
     /** 読み込んだMIB */
     private Mib mib;
-    /** MIBのrootオブジェクト */
-    private ObjectIdentifierValue rootOid;
-    /** MIBのrootオブジェクト */
+    /** 適用するPrintFilterのリスト */
     private List<PrintFilter> filterList = new ArrayList<PrintFilter>();
     
     /**
@@ -124,7 +122,6 @@ public class MibPrinter {
         MibLoader loader = new MibLoader();
         loader.addDir(file.getParentFile());
         this.mib = loader.load(file);
-        this.rootOid = getRootOid(this.mib);
     }
     
     /**
@@ -137,7 +134,6 @@ public class MibPrinter {
     public MibPrinter(URL url) throws IOException, MibLoaderException {
         MibLoader loader = new MibLoader();
         this.mib = loader.load(url);
-        this.rootOid = getRootOid(this.mib);
     }
     
     /**
@@ -193,7 +189,8 @@ public class MibPrinter {
     	}
     	
     	// MIB情報を出力する
-        printOid(this.rootOid, format);
+    	ObjectIdentifierValue rootOid = getRootOid(this.mib);
+        printOid(rootOid, format);
     }
     
     /**
