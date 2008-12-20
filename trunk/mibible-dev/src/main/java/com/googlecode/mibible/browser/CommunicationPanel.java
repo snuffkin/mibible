@@ -4,16 +4,16 @@ import javax.swing.JPanel;
 
 public class CommunicationPanel extends JPanel
 {
-	/** Mediator */
-	private Mediator mediator;
+    /** Mediator */
+    private Mediator mediator;
 
     public CommunicationPanel(Mediator mediator)
     {
-    	this.mediator = mediator;
+        this.mediator = mediator;
     }
 
     public void initialize()
     {
-    	
+        
     }
 }

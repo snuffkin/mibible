@@ -112,7 +112,7 @@ public class MibTreeCellRenderer extends DefaultTreeCellRenderer
     
     public MibTreeCellRenderer(NoticeNodeHolder holder)
     {
-    	this.holder = holder;
+        this.holder = holder;
     }
 
     /**
@@ -142,17 +142,17 @@ public class MibTreeCellRenderer extends DefaultTreeCellRenderer
             
             if (this.holder.isNotice((MibTreeNode) value))
             {
-            	setBackgroundNonSelectionColor(Color.YELLOW);
+                setBackgroundNonSelectionColor(Color.YELLOW);
             }
             else
             {
-            	setBackgroundNonSelectionColor(Color.WHITE);
+                setBackgroundNonSelectionColor(Color.WHITE);
             }
         }
         else
         {
             tempValue = value;
-        	setBackgroundNonSelectionColor(Color.WHITE);
+            setBackgroundNonSelectionColor(Color.WHITE);
         }
         
         // Nodeのオブジェクトを表示文字列に変換する

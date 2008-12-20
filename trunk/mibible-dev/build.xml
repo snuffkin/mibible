@@ -7,7 +7,7 @@
   command-line with -Dname=value):
 
     build.name
-        The base name of the build. Defaults to "mibible-browser".
+        The base name of the build. Defaults to "mibible".
 
     build.version
         The build version number.
@@ -17,7 +17,7 @@
         information. By default this flag is off.
 
 -->
-<project name="mibible-browser" default="compile" basedir=".">
+<project name="mibible" default="compile" basedir=".">
 
 
 <!-- INITIALIZATION -->
@@ -32,8 +32,8 @@
               pattern="yyyy-MM-dd" />
     </tstamp>
     <property name="build.date" value="${DSTAMP}" />
-    <property name="build.name" value="mibible-browser" />
-    <property name="build.version" value="0.3.0beta" />
+    <property name="build.name" value="mibible" />
+    <property name="build.version" value="0.3.0beta2" />
   </target>
 
 
@@ -53,7 +53,7 @@
     <delete quiet="true">
       <fileset dir="classes" />
       <fileset dir="lib"
-               includes="mibible-browser*.jar" />
+               includes="mibible*.jar" />
     </delete>
     <mkdir dir="classes" />
   </target>

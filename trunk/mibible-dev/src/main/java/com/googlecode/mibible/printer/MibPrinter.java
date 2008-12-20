@@ -33,7 +33,7 @@ import net.percederberg.mibble.value.ObjectIdentifierValue;
  * @since 0.2.0
  */
 public class MibPrinter {
-	
+    
     /** ヘルプ文字列 */
     private static final String COMMAND_HELP
         = "Usage: mibprinter <format> <file or URL>\n";
@@ -175,21 +175,21 @@ public class MibPrinter {
      * @param format 出力フォーマット
      */
     public void printMib(String format) {
-    	// 適用するPrintFilterの一覧をクリアする
-    	this.filterList.clear();
-    	
-    	// 適用するPrintFilterの一覧を作成する
-    	for (PrintFilter filter : allFilters) {
+        // 適用するPrintFilterの一覧をクリアする
+        this.filterList.clear();
+        
+        // 適用するPrintFilterの一覧を作成する
+        for (PrintFilter filter : allFilters) {
             String key = filter.getFilterKey();
             // 適用すべきPrintFilterかどうか、出力フォーマットを確認する
             if (format.contains(key)) {
                 // 適用するPrintFilterの一覧に追加する
-            	this.filterList.add(filter);
+                this.filterList.add(filter);
             }
-    	}
-    	
-    	// MIB情報を出力する
-    	ObjectIdentifierValue rootOid = getRootOid(this.mib);
+        }
+        
+        // MIB情報を出力する
+        ObjectIdentifierValue rootOid = getRootOid(this.mib);
         printOid(rootOid, format);
     }
     
