@@ -14,19 +14,19 @@ ry(1).ifOperStatus(8)
  * @since 0.2.0
  */
 public class TextNumFilter extends PrintFilter {
-	
+    
     /**
      * コンストラクタ。
      */
-	public TextNumFilter() {
-		super("%TN");
-	}
-	
+    public TextNumFilter() {
+        super("%TN");
+    }
+    
     /**
      * {@inheritDoc}
      */
-	@Override
-	public String getPrintString(ObjectIdentifierValue oid) {
-		return oid.toDetailString();
-	}
+    @Override
+    public String getPrintString(ObjectIdentifierValue oid) {
+        return oid.toDetailString();
+    }
 }

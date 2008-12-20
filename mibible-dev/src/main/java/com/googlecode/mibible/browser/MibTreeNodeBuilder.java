@@ -15,19 +15,19 @@ import net.percederberg.mibble.value.ObjectIdentifierValue;
 
 public class MibTreeNodeBuilder
 {
-	private Map<String, MibTreeNode> oidToMibTreeNode
+    private Map<String, MibTreeNode> oidToMibTreeNode
         = new HashMap<String, MibTreeNode>();
-	private Map<String, MibTreeNode> nameToMibTreeNode
-	    = new HashMap<String, MibTreeNode>();
+    private Map<String, MibTreeNode> nameToMibTreeNode
+        = new HashMap<String, MibTreeNode>();
 
-	public MibTreeNodeBuilder(
-			Map<String, MibTreeNode> oidToMibTreeNode,
-			Map<String, MibTreeNode> nameToMibTreeNode)
-	{
-		this.oidToMibTreeNode = oidToMibTreeNode;
-		this.nameToMibTreeNode = nameToMibTreeNode;
-	}
-	
+    public MibTreeNodeBuilder(
+            Map<String, MibTreeNode> oidToMibTreeNode,
+            Map<String, MibTreeNode> nameToMibTreeNode)
+    {
+        this.oidToMibTreeNode = oidToMibTreeNode;
+        this.nameToMibTreeNode = nameToMibTreeNode;
+    }
+    
     /**
      * Adds a MIB to the MIB tree.
      *
@@ -41,9 +41,9 @@ public class MibTreeNodeBuilder
         List<MibInfo>  list = new ArrayList<MibInfo>();
 
         // Create value sub tree
-	    root = new MibTreeNode(mib.getName(), null);
+        root = new MibTreeNode(mib.getName(), null);
         while (iter.hasNext()) {
-        	// valueTreeにMibSymbolを追加する
+            // valueTreeにMibSymbolを追加する
             symbol = iter.next();
             addSymbol(root, symbol, list);
         }
@@ -87,8 +87,8 @@ public class MibTreeNodeBuilder
      * @return the MIB tree node added
      */
     private MibTreeNode addToTree(MibTreeNode root, ObjectIdentifierValue oid, List<MibInfo> list) {
-    	MibTreeNode  parent;
-    	MibTreeNode  node;
+        MibTreeNode  parent;
+        MibTreeNode  node;
         String   name;
 
         // Add parent node to tree (if needed)

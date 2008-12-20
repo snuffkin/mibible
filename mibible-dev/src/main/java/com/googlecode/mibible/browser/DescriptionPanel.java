@@ -9,15 +9,15 @@ import javax.swing.JTextArea;
 
 public class DescriptionPanel extends JPanel
 {
-	/** Mediator */
-	private Mediator mediator;
+    /** Mediator */
+    private Mediator mediator;
 
-	/** Description Area */
-	private JTextArea descriptionArea = new JTextArea();
-	
+    /** Description Area */
+    private JTextArea descriptionArea = new JTextArea();
+    
     public DescriptionPanel(Mediator mediator)
     {
-    	this.mediator = mediator;
+        this.mediator = mediator;
     }
 
     public void initialize()

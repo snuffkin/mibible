@@ -13,7 +13,7 @@ import net.percederberg.mibble.value.ObjectIdentifierValue;
  * @since 0.2.0
  */
 public class ShortNumericOidFilter extends PrintFilter {
-	
+    
     /**
      * コンストラクタ。
      */
